@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bev.Instruments.Thorlabs.Ccs", "Bev.Instruments.Thorlabs.Ccs\Bev.Instruments.Thorlabs.Ccs.csproj", "{70D226C1-A873-4633-8A08-1C7BF4D4555A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCStest", "CCStest\CCStest.csproj", "{D6773084-0979-4D57-B748-66C7B6662499}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6773084-0979-4D57-B748-66C7B6662499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6773084-0979-4D57-B748-66C7B6662499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6773084-0979-4D57-B748-66C7B6662499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6773084-0979-4D57-B748-66C7B6662499}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96469501-C9D7-40CD-9F66-9B8E8D07DFE9}
+	EndGlobalSection
+EndGlobal
