@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CalcData.cs" />
     <Compile Include="CalcDataPoint.cs" />
+    <Compile Include="IDataPoint.cs" />
     <Compile Include="ProductID.cs" />
     <Compile Include="SpecMath.cs" />
     <Compile Include="SpectralData.cs" />

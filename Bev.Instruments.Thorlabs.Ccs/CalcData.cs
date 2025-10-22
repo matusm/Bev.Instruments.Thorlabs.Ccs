@@ -8,6 +8,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
         public double[] NoiseValues => dataPoints.Select(dp => dp.Noise).ToArray();
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
+        public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
 
         public CalcData(SpectralData measuredSpectrum)
         {

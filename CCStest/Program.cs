@@ -19,13 +19,13 @@ namespace CCStest
             Console.WriteLine($"Max Wavelength:           {tlCcs.MaximumWavelength:F2} nm");
             Console.WriteLine();
 
-            int nSamples = 20;
+            int nSamples = 100;
 
             SpectralData dark = new SpectralData(tlCcs.Wavelengths);
             SpectralData filter = new SpectralData(tlCcs.Wavelengths);
             SpectralData reference = new SpectralData(tlCcs.Wavelengths);
 
-            tlCcs.SetIntegrationTime(0.37);
+            tlCcs.SetIntegrationTime(0.1);
 
 
             //Measure the reference spectrum
@@ -65,11 +65,12 @@ namespace CCStest
             var filterCalc = new CalcData(filter);  
 
             var transmission = SpecMath.RelXXX(filterCalc,refCalc,darkCalc);
+            var signal = SpecMath.Subtract(refCalc, darkCalc);
 
             Console.WriteLine("Wavelength (nm)  Transmission  Noise");  
-            for (int i = 0; i < transmission.Wavelengths.Length; i++)
+            for (int i = 0; i < signal.Wavelengths.Length; i++)
             {
-                Console.WriteLine($"{transmission.Wavelengths[i],12:F2} {transmission.AverageValues[i],8:F5} {transmission.NoiseValues[i],8:F5}");
+                Console.WriteLine(signal.DataPoints[i].ToCsvLine());
             }
 
         //double integrationTime = 0.00001; // seconds

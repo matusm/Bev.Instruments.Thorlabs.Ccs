@@ -12,9 +12,10 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
         public double[] MaxValues => dataPoints.Select(dp => dp.MaxSignal).ToArray();
         public double[] MinValues => dataPoints.Select(dp => dp.MinSignal).ToArray();
+        public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
 
         public double MaximumSignal => GetMaximumSignal();
-        public int NumberOfSpectra => dataPoints[0].Count;
+        public int NumberOfSpectra => dataPoints[0].Dof + 1;
         public bool IsOverexposed => MaximumSignal >= 0.95;
         public bool IsEmpty => NumberOfSpectra == 0;
 
