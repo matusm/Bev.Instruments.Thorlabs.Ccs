@@ -2,7 +2,7 @@
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
-    public class CalcData
+    public class CalcData : ISpectrum
     {
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
@@ -10,6 +10,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
         public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
         public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
+        public int NumberOfPoints => dataPoints.Length;
 
         public CalcData(SpectralData measuredSpectrum)
         {

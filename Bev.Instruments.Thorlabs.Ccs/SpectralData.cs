@@ -4,7 +4,7 @@ using At.Matus.StatisticPod;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
-    public class SpectralData
+    public class SpectralData : ISpectrum
     {
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
@@ -17,6 +17,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         public double MaximumSignal => GetMaximumSignal();
         public int NumberOfSpectra => dataPoints[0].Dof + 1;
+        public int NumberOfPoints => dataPoints.Length;
         public bool IsOverexposed => MaximumSignal >= 1;
         public bool IsEmpty => NumberOfSpectra == 0;
 
