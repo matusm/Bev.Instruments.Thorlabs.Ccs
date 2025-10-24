@@ -1,6 +1,6 @@
 ﻿namespace Bev.Instruments.Thorlabs.Ccs
 {
-    public class CalcDataPoint : IDataPoint
+    public class DataPoint : IDataPoint
     {
         public double Wavelength { get; }
         public double Signal { get; }
@@ -8,11 +8,11 @@
         public double StdDev { get; }
         public int Dof { get; }
 
-        public CalcDataPoint(double wavelength, double signal) : this(wavelength, signal, 0, 0, int.MaxValue) { }
+        public DataPoint(double wavelength, double signal) : this(wavelength, signal, 0, 0, int.MaxValue) { }
 
-        public CalcDataPoint(double wavelength, double signal, double noise, double stdDev) : this(wavelength, signal, noise, stdDev, int.MaxValue) { }
+        public DataPoint(double wavelength, double signal, double noise, double stdDev) : this(wavelength, signal, noise, stdDev, int.MaxValue) { }
 
-        public CalcDataPoint(double wavelength, double signal, double noise, double stdDev, int dof)
+        public DataPoint(double wavelength, double signal, double noise, double stdDev, int dof)
         {
             Wavelength = wavelength;
             Signal = signal;

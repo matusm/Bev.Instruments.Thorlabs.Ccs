@@ -49,14 +49,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalcData.cs" />
-    <Compile Include="CalcDataPoint.cs" />
+    <Compile Include="Spectrum.cs" />
+    <Compile Include="DataPoint.cs" />
     <Compile Include="IDataPoint.cs" />
     <Compile Include="ISpectrum.cs" />
     <Compile Include="ProductID.cs" />
     <Compile Include="SpecMath.cs" />
-    <Compile Include="SpectralData.cs" />
-    <Compile Include="SpectralDataPoint.cs" />
+    <Compile Include="MeasuredSpectrum.cs" />
+    <Compile Include="MeasuredDataPoint.cs" />
     <Compile Include="TlCcs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

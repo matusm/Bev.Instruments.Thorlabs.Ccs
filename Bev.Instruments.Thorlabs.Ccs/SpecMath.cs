@@ -4,7 +4,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public static class SpecMath
     {
-        public static CalcData Subtract(CalcData signal, CalcData bckgnd)
+        public static Spectrum Subtract(Spectrum signal, Spectrum bckgnd)
         {
             double[] wl = new double[signal.Wavelengths.Length];
             double[] newSignal = new double[signal.Wavelengths.Length];
@@ -17,10 +17,10 @@ namespace Bev.Instruments.Thorlabs.Ccs
                 newNoise[i] = SqSum(signal.NoiseValues[i], bckgnd.NoiseValues[i]);
                 newStdDev[i] = SqSum(signal.StdDevValues[i], bckgnd.StdDevValues[i]);
             }
-            return new CalcData(wl,newSignal, newNoise, newStdDev);
+            return new Spectrum(wl,newSignal, newNoise, newStdDev);
         }
 
-        public static CalcData RelXXX(CalcData signal, CalcData reference, CalcData bckgnd)
+        public static Spectrum RelXXX(Spectrum signal, Spectrum reference, Spectrum bckgnd)
         {
             double[] wl = new double[signal.Wavelengths.Length];
             double[] newSignal = new double[signal.Wavelengths.Length];
@@ -33,7 +33,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
                 newNoise[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.NoiseValues[i], reference.NoiseValues[i], bckgnd.NoiseValues[i]);
                 newStdDev[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.StdDevValues[i], reference.StdDevValues[i], bckgnd.StdDevValues[i]); ;
             }
-            return new CalcData(wl, newSignal, newNoise, newStdDev);
+            return new Spectrum(wl, newSignal, newNoise, newStdDev);
         }
 
         private static double SqSum(double u1, double u2) => Math.Sqrt(u1 * u1 + u2 * u2);

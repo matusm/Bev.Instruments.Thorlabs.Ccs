@@ -3,7 +3,7 @@ using System;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
-    public class SpectralDataPoint : IDataPoint
+    public class MeasuredDataPoint : IDataPoint
     {
         public double Wavelength { get; }
         public double Signal => sp.AverageValue;
@@ -13,7 +13,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double MinSignal => sp.MinimumValue;
         public int Dof => (int)sp.SampleSize - 1;
 
-        public SpectralDataPoint(double wavelength) => Wavelength = wavelength;
+        public MeasuredDataPoint(double wavelength) => Wavelength = wavelength;
 
         public void UpdateSignal(double signal) => sp.Update(signal);
 

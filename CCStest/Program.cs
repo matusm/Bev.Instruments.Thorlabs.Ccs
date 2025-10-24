@@ -27,9 +27,9 @@ namespace CCStest
             tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
             int nSamples = 100;
-            SpectralData dark = new SpectralData(tlCcs.Wavelengths);
-            SpectralData filter = new SpectralData(tlCcs.Wavelengths);
-            SpectralData reference = new SpectralData(tlCcs.Wavelengths);
+            MeasuredSpectrum dark = new MeasuredSpectrum(tlCcs.Wavelengths);
+            MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
+            MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
 
             //Measure the reference spectrum
             Console.WriteLine();
@@ -63,9 +63,9 @@ namespace CCStest
                 }
             }
 
-            var refCalc = new CalcData(reference);
-            var darkCalc = new CalcData(dark);
-            var filterCalc = new CalcData(filter);
+            var refCalc = new Spectrum(reference);
+            var darkCalc = new Spectrum(dark);
+            var filterCalc = new Spectrum(filter);
 
             var transmission = SpecMath.RelXXX(filterCalc, refCalc, darkCalc);
             var signal = SpecMath.Subtract(refCalc, darkCalc);
@@ -81,7 +81,7 @@ namespace CCStest
         public static double GetOptimalIntegrationTime(TlCcs tlCcs, double targetSignal)
         {
             double optimalIntegrationTime = 0;
-            SpectralData spectrum = new SpectralData(tlCcs.Wavelengths);
+            MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
             double integrationTime = 0.00001; // seconds
             while (integrationTime < 58)
             {
