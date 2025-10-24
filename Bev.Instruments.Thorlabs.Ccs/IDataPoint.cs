@@ -8,6 +8,7 @@
         double StdDev { get; }
         int Dof { get; }
 
-        string ToCsvLine(); 
+        string ToCsvLine();
+        string GetCsvHeader();
     }
 }

@@ -21,6 +21,7 @@
             Dof = dof;
         }
 
-        public string ToCsvLine() => $"{Wavelength},{Signal},{Noise},{StdDev},{Dof}";
+        public string ToCsvLine() => $"{Wavelength:F2},{Signal:F6},{Noise:F6},{StdDev:F6},{Dof}";
+        public string GetCsvHeader() => "Wavelength,Signal,Noise,StdDev,DoF";
     }
 }

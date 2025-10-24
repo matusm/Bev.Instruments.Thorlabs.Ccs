@@ -19,7 +19,9 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         public void Clear() => sp.Restart();
 
-        public string ToCsvLine() => $"{Wavelength},{Signal},{Noise},{StdDev},{Dof}";
+        public string ToCsvLine() => $"{Wavelength:F2},{Signal:F6},{MinSignal:F6},{MaxSignal:F6},{Noise:F6},{StdDev:F6},{Dof}";
+
+        public string GetCsvHeader() => "Wavelength,Signal,MinSignal,MaxSignal,Noise,StdDev,DoF";
 
         private readonly StatisticPod sp = new StatisticPod();
 
