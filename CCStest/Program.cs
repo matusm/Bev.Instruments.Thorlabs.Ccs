@@ -21,22 +21,42 @@ namespace CCStest
             Console.WriteLine($"Min Wavelength:           {tlCcs.MinimumWavelength:F2} nm");
             Console.WriteLine($"Max Wavelength:           {tlCcs.MaximumWavelength:F2} nm");
             Console.WriteLine();
-            
-            Console.WriteLine("Estimating optimal integration time...");
-            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, true);
-            Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
-            Console.WriteLine();
 
-            int nSamples = 11;
+            //Console.WriteLine("Estimating optimal integration time...");
+            //double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, true);
+            //Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
+            //Console.WriteLine();
+            //tlCcs.SetIntegrationTime(optimalIntegrationTime);
+            tlCcs.SetIntegrationTime(0.01);
+
+            int nSamples = 50;
 
             MeasuredSpectrum reference = Helper.GetSpectrumUI("reference spectrum", tlCcs, nSamples);
             //MeasuredSpectrum filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
-            //MeasuredSpectrum dark = Helper.GetSpectrumUI("dark spectrum", tlCcs, nSamples);
+            MeasuredSpectrum dark = Helper.GetSpectrumUI("dark spectrum", tlCcs, nSamples*2);
 
             //var transmission = SpecMath.RelXXX(filter, reference, dark);
-            //var signal = SpecMath.Subtract(reference, dark);
+            var signal = SpecMath.Subtract(reference, dark);
 
-            Console.WriteLine(reference.ToThorlabsCsvLines());
+
+            int n1 = 0;
+            int n2 = 0;
+
+            foreach (var dp in signal.DataPoints)
+            {
+                n1++;
+                double En = Math.Abs(dp.Signal / (2*dp.Noise));
+                if (En >= 1.0)
+                    n2++;
+                Console.WriteLine($"{dp.Wavelength:F2} nm: {En:F2}");
+
+            }
+            Console.WriteLine($"{100.0 * (double)n2 / (double)n1:f1} %");
+
+
+
+            //Console.WriteLine(signal.ToCsvLines());
+            Console.WriteLine(signal.Name);
 
 
         }

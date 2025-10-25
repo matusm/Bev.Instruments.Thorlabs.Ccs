@@ -18,6 +18,7 @@ namespace CCStest
                 }
                 Console.WriteLine();
             }
+            spectrum.Name = $"{message} n={numberSamples} t={tlCcs.GetIntegrationTime()}";
             return spectrum;
         }
 

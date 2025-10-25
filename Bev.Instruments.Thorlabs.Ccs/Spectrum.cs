@@ -25,6 +25,8 @@ namespace Bev.Instruments.Thorlabs.Ccs
             }
         }
 
+        public Spectrum(DataPoint[] dataPoints) => this.dataPoints = dataPoints;
+
         public Spectrum(double[] wavelength, double[] averageValues, double[] noiseValues, double[] stdDevValues)
         {
             dataPoints = new DataPoint[wavelength.Length];
