@@ -4,7 +4,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public static class SpecMath
     {
-        public static Spectrum Subtract(Spectrum signal, Spectrum bckgnd)
+        public static Spectrum Subtract(ISpectrum signal, ISpectrum bckgnd)
         {
             double[] wl = new double[signal.Wavelengths.Length];
             double[] newSignal = new double[signal.Wavelengths.Length];
@@ -20,7 +20,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return new Spectrum(wl,newSignal, newNoise, newStdDev);
         }
 
-        public static Spectrum RelXXX(Spectrum signal, Spectrum reference, Spectrum bckgnd)
+        public static Spectrum RelXXX(ISpectrum signal, ISpectrum reference, ISpectrum bckgnd)
         {
             double[] wl = new double[signal.Wavelengths.Length];
             double[] newSignal = new double[signal.Wavelengths.Length];

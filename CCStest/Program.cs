@@ -10,6 +10,7 @@ namespace CCStest
         static void Main(string[] args)
         {
             tlCcs = new TlCcs(ProductID.CCS100, "M00928408");
+
             Console.WriteLine($"Resource Name:            {tlCcs.ResourceName}");
             Console.WriteLine($"Instrument Mamufacturer:  {tlCcs.InstrumentManufacturer}");
             Console.WriteLine($"Instrument Type:          {tlCcs.InstrumentType}");
@@ -20,93 +21,25 @@ namespace CCStest
             Console.WriteLine($"Min Wavelength:           {tlCcs.MinimumWavelength:F2} nm");
             Console.WriteLine($"Max Wavelength:           {tlCcs.MaximumWavelength:F2} nm");
             Console.WriteLine();
+            
             Console.WriteLine("Estimating optimal integration time...");
-            double optimalIntegrationTime = GetOptimalIntegrationTime(tlCcs, 1.0);
+            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, true);
             Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
             Console.WriteLine();
-            tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
-            int nSamples = 100;
-            MeasuredSpectrum dark = new MeasuredSpectrum(tlCcs.Wavelengths);
-            MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
-            MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
+            int nSamples = 11;
 
-            //Measure the reference spectrum
-            Console.WriteLine();
-            Console.WriteLine("Press <ENTER> to start measurement of reference spectrum.");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
-            {
-                for (int i = 0; i < nSamples; i++)
-                {
-                    reference.UpdateSignal(tlCcs.GetSingleScanData());
-                    Console.Write(".");
-                }
-            }
-            Console.WriteLine();
-            Console.WriteLine("Press <ENTER> to start measurement of sample spectrum.");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
-            {
-                for (int i = 0; i < nSamples; i++)
-                {
-                    filter.UpdateSignal(tlCcs.GetSingleScanData());
-                    Console.Write(".");
-                }
-            }
-            Console.WriteLine();
-            Console.WriteLine("Press <ENTER> to start measurement of dark spectrum.");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
-            {
-                for (int i = 0; i < nSamples; i++)
-                {
-                    dark.UpdateSignal(tlCcs.GetSingleScanData());
-                    Console.Write(".");
-                }
-            }
+            MeasuredSpectrum reference = Helper.GetSpectrumUI("reference spectrum", tlCcs, nSamples);
+            //MeasuredSpectrum filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
+            //MeasuredSpectrum dark = Helper.GetSpectrumUI("dark spectrum", tlCcs, nSamples);
 
-            var refCalc = new Spectrum(reference);
-            var darkCalc = new Spectrum(dark);
-            var filterCalc = new Spectrum(filter);
+            //var transmission = SpecMath.RelXXX(filter, reference, dark);
+            //var signal = SpecMath.Subtract(reference, dark);
 
-            var transmission = SpecMath.RelXXX(filterCalc, refCalc, darkCalc);
-            var signal = SpecMath.Subtract(refCalc, darkCalc);
+            Console.WriteLine(reference.ToThorlabsCsvLines());
 
-            Console.WriteLine("Wavelength (nm)  Transmission  Noise");
-            for (int i = 0; i < signal.Wavelengths.Length; i++)
-            {
-                Console.WriteLine(signal.DataPoints[i].ToCsvLine());
-            }
 
         }
 
-        public static double GetOptimalIntegrationTime(TlCcs tlCcs, double targetSignal)
-        {
-            double optimalIntegrationTime = 0;
-            MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
-            double integrationTime = 0.00001; // seconds
-            while (integrationTime < 58)
-            {
-                spectrum.Clear();
-                tlCcs.SetIntegrationTime(integrationTime);
-                spectrum.UpdateSignal(tlCcs.GetSingleScanData());
-                //Console.WriteLine($"{tlCcs.GetIntegrationTime():F5} {spectrum.MaximumSignal:F5}");
-                //Console.Write(".");
-                if (spectrum.MaximumSignal >= 0.49)
-                {
-                    optimalIntegrationTime = tlCcs.GetIntegrationTime() * (targetSignal / spectrum.MaximumSignal);
-                    break;
-                }
-                integrationTime *= 2;
-            }
-            return RoundToSignificantDigits(optimalIntegrationTime, 2);
-        }
-
-        public static double RoundToSignificantDigits(double number, int digits)
-        {
-            int sign = Math.Sign(number);
-            if (sign < 0) number *= -1;
-            if (number == 0) return 0;
-            double scale = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(number))) + 1);
-            return sign * scale * Math.Round(number / scale, digits);
-        }
     }
 }
