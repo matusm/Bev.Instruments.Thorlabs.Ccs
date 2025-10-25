@@ -4,6 +4,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public class Spectrum : ISpectrum
     {
+        public string Name { get; set; } = "Spectrum";
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
         public double[] NoiseValues => dataPoints.Select(dp => dp.Noise).ToArray();
@@ -15,6 +16,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         // constructor that copies data from another Spectrum or MeasuredSpectrum
         public Spectrum(ISpectrum spectrum)
         {
+            Name = spectrum.Name;
             dataPoints = new DataPoint[spectrum.NumberOfPoints];
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
             {

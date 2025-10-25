@@ -9,7 +9,7 @@ namespace CCStest
 {
     internal static class TextComposer
     {
-        public static string ToCsvLines(this ISpectrum spectrum)
+        internal static string ToCsvLines(this ISpectrum spectrum)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
@@ -19,7 +19,7 @@ namespace CCStest
             return sb.ToString();
         }
 
-        public static string ToThorlabsCsvLines(this ISpectrum spectrum)
+        internal static string ToThorlabsCsvLines(this ISpectrum spectrum)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("[Data]");
@@ -31,6 +31,7 @@ namespace CCStest
             sb.AppendLine("[EndOfFile]");
             return sb.ToString();
         }
+
 
 
 

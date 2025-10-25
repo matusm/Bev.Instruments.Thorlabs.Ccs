@@ -3,9 +3,9 @@ using Bev.Instruments.Thorlabs.Ccs;
 
 namespace CCStest
 {
-    public static class Helper
+    internal static class Helper
     {
-        public static MeasuredSpectrum GetSpectrumUI(string message, TlCcs tlCcs, int numberSamples)
+        internal static MeasuredSpectrum GetSpectrumUI(string message, TlCcs tlCcs, int numberSamples)
         {
             MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
             Console.WriteLine($"Press <ENTER> to start measurement of {message}.");
@@ -21,9 +21,9 @@ namespace CCStest
             return spectrum;
         }
 
-        public static double GetOptimalIntegrationTime(TlCcs tlCcs) => GetOptimalIntegrationTime(tlCcs, 1.0, false);
+        internal static double GetOptimalIntegrationTime(TlCcs tlCcs) => GetOptimalIntegrationTime(tlCcs, 1.0, false);
 
-        public static double GetOptimalIntegrationTime(TlCcs tlCcs, double targetSignal, bool debug)
+        internal static double GetOptimalIntegrationTime(TlCcs tlCcs, double targetSignal, bool debug)
         {
             double optimalIntegrationTime = 0;
             MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);

@@ -6,6 +6,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public class MeasuredSpectrum : ISpectrum
     {
+        public string Name { get; set; } = "Measured Spectrum";
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
         public double[] NoiseValues => dataPoints.Select(dp => dp.Noise).ToArray();
