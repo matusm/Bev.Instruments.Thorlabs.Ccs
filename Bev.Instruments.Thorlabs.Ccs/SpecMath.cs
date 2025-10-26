@@ -4,6 +4,22 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public static class SpecMath
     {
+        public static Spectrum Weighting(ISpectrum spectrum, double[] weights)
+        {
+            if (spectrum.NumberOfPoints != weights.Length)
+                throw new ArgumentException("Spectrum and weights must have the same number of points.");
+
+            DataPoint[] newDataPoints = new DataPoint[spectrum.NumberOfPoints];
+            for (int i = 0; i < newDataPoints.Length; i++)
+            {
+                IDataPoint point = spectrum.DataPoints[i];
+                newDataPoints[i] = new DataPoint(point.Wavelength, point.Signal * weights[i], point.Sem * weights[i], point.StdDev * weights[i], point.Dof);
+            }
+            Spectrum weightedSpectrum = new Spectrum(newDataPoints);
+            weightedSpectrum.Name = $"Weighted[{spectrum.Name}]";
+            return weightedSpectrum;
+        }
+
         public static Spectrum Subtract(ISpectrum minuend, ISpectrum subtrahend)
         {
             DataPoint[] newDataPoints = new DataPoint[minuend.NumberOfPoints];
@@ -13,7 +29,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
                 IDataPoint pointSub = subtrahend.DataPoints[i];
                 newDataPoints[i] = Subtract(pointMin, pointSub);
             }
-            var diff = new Spectrum(newDataPoints);
+            Spectrum diff = new Spectrum(newDataPoints);
             diff.Name = $"[{minuend.Name}] - [{subtrahend.Name}]";
             return diff;
         }
@@ -27,26 +43,24 @@ namespace Bev.Instruments.Thorlabs.Ccs
                 IDataPoint secondPoint = second.DataPoints[i];
                 newDataPoints[i] = Add(firstPoint, secondPoint);
             }
-            var diff = new Spectrum(newDataPoints);
+            Spectrum diff = new Spectrum(newDataPoints);
             diff.Name = $"[{first.Name}] + [{second.Name}]";
             return diff;
         }
 
-
-        public static Spectrum RelXXX(ISpectrum signal, ISpectrum reference, ISpectrum bckgnd)
+        public static Spectrum ComputeBiasCorrectedRatio(ISpectrum signal, ISpectrum reference, ISpectrum bckgnd)
         {
-            double[] wl = new double[signal.Wavelengths.Length];
-            double[] newSignal = new double[signal.Wavelengths.Length];
-            double[] newNoise = new double[signal.Wavelengths.Length];
-            double[] newStdDev = new double[signal.Wavelengths.Length];
-            for (int i = 0; i < signal.Wavelengths.Length; i++)
+            DataPoint[] newDataPoints = new DataPoint[signal.NumberOfPoints];
+            for (int i = 0; i < newDataPoints.Length; i++)
             {
-                wl[i] = signal.Wavelengths[i];
-                newSignal[i] = (signal.AverageValues[i] - bckgnd.AverageValues[i])/(reference.AverageValues[i] - bckgnd.AverageValues[i]);
-                newNoise[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.SemValues[i], reference.SemValues[i], bckgnd.SemValues[i]);
-                newStdDev[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.StdDevValues[i], reference.StdDevValues[i], bckgnd.StdDevValues[i]); ;
+                IDataPoint signalPoint = signal.DataPoints[i];
+                IDataPoint referencePoint = reference.DataPoints[i];
+                IDataPoint bckgndPoint = bckgnd.DataPoints[i];
+                newDataPoints[i] = ComputeBiasCorrectedRatio(signalPoint, referencePoint, bckgndPoint);
             }
-            return new Spectrum(wl, newSignal, newNoise, newStdDev);
+            Spectrum ratio = new Spectrum(newDataPoints);
+            ratio.Name = $"RelBC[{signal.Name}] / [{reference.Name}]";
+            return ratio;   
         }
 
         private static DataPoint Subtract(IDataPoint minuend, IDataPoint subtrahend)
@@ -54,7 +68,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double newSignal = minuend.Signal - subtrahend.Signal;
             double newSem = SqSum(minuend.Sem, subtrahend.Sem);
             double newStdDev = SqSum(minuend.StdDev, subtrahend.StdDev);
-            int newDof = WelchSatterthwaiteDoF(minuend.Sem, subtrahend.Sem, minuend.Dof, subtrahend.Dof);
+            int newDof = WelchSatterthwaiteSum(minuend.Sem, subtrahend.Sem, minuend.Dof, subtrahend.Dof);
             return new DataPoint(minuend.Wavelength, newSignal, newSem, newStdDev, newDof);
         }
 
@@ -63,32 +77,40 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double newSignal = first.Signal + second.Signal;
             double newSem = SqSum(first.Sem, second.Sem);
             double newStdDev = SqSum(first.StdDev, second.StdDev);
-            int newDof = WelchSatterthwaiteDoF(first.Sem, second.Sem, first.Dof, second.Dof);
+            int newDof = WelchSatterthwaiteSum(first.Sem, second.Sem, first.Dof, second.Dof);
             return new DataPoint(first.Wavelength, newSignal, newSem, newStdDev, newDof);
+        }
+
+        private static DataPoint ComputeBiasCorrectedRatio(IDataPoint signal, IDataPoint reference, IDataPoint bckgnd)
+        {
+            double correctedSignal = signal.Signal - bckgnd.Signal;
+            double correctedReference = reference.Signal - bckgnd.Signal;
+            double ratio = correctedSignal / correctedReference;
+            double newSem = BiasCorrectedRatioUncertainty(signal.Signal, reference.Signal, bckgnd.Signal, signal.Sem, reference.Sem, bckgnd.Sem);
+            double newStdDev = BiasCorrectedRatioUncertainty(signal.Signal, reference.Signal, bckgnd.Signal, signal.StdDev, reference.StdDev, bckgnd.StdDev);
+            int newDof = WelchSatterthwaiteRatio(newSem, signal.Sem, reference.Sem, bckgnd.Sem, signal.Dof, reference.Dof, bckgnd.Dof); 
+            return new DataPoint(signal.Wavelength, ratio, newSem, newStdDev, newDof);
         }
 
         private static double SqSum(double u1, double u2) => Math.Sqrt(u1 * u1 + u2 * u2);
 
-        // Function to compute Welch–Satterthwaite degrees of freedom
-        static int WelchSatterthwaiteDoF(double s1, double s2, int dof1, int dof2)
+        private static int WelchSatterthwaiteSum(double s1, double s2, int dof1, int dof2)
         {
-            // Convert standard deviations to variances 
             double var1 = s1 * s1;
             double var2 = s2 * s2;
-
-            // Numerator: (var1 + var2)^2
             double numerator = Math.Pow(var1 + var2, 2);
-
-            // Denominator: (var1^2 / (n1 - 1)) + (var2^2 / (n2 - 1))
             double denominator = (Math.Pow(var1, 2) / (dof1)) + (Math.Pow(var2, 2) / (dof2));
-
-            // Degrees of freedom
             return (int)(numerator / denominator);
         }
 
+        private static int WelchSatterthwaiteRatio(double uc, double u1, double u2, double u3, int dof1, int dof2, int dof3)
+        {
+            double numerator = Math.Pow(uc, 4);
+            double denominator = (Math.Pow(u1, 4) / dof1) + (Math.Pow(u2, 4) / dof2) + (Math.Pow(u3, 4) / dof3);
+            return (int)(numerator / denominator);
+        }
 
-
-        private static double RelUncXXX(double x, double xr, double xb, double ux, double uxr, double uxb)
+        private static double BiasCorrectedRatioUncertainty(double x, double xr, double xb, double ux, double uxr, double uxb)
         {
             double v1 = 1.0 / (xr - xb);
             double v2 = v1 * v1;

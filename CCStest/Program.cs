@@ -28,18 +28,17 @@ namespace CCStest
             Console.WriteLine();
             tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
-            int nSamples = 50;
+            int nSamples = 20;
 
             MeasuredSpectrum reference = Helper.GetSpectrumUI("reference spectrum", tlCcs, nSamples);
-            //MeasuredSpectrum filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
+            MeasuredSpectrum filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
             MeasuredSpectrum dark = Helper.GetSpectrumUI("dark spectrum", tlCcs, nSamples*2);
 
-            //var transmission = SpecMath.RelXXX(filter, reference, dark);
-            var signal = SpecMath.Subtract(reference, dark);
+            var transmission = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
+            //var signal = SpecMath.Subtract(reference, dark);
 
-            Console.WriteLine(signal.ToCsvLines());
-            Console.WriteLine(signal.Name);
-
+            Console.WriteLine(transmission.ToCsvLines());
+            Console.WriteLine(transmission.Name);
 
         }
 
