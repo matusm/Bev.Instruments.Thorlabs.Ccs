@@ -54,7 +54,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double newSignal = minuend.Signal - subtrahend.Signal;
             double newSem = SqSum(minuend.Sem, subtrahend.Sem);
             double newStdDev = SqSum(minuend.StdDev, subtrahend.StdDev);
-            int newDof = Math.Min(minuend.Dof, subtrahend.Dof); // conservative approach, TODO: Welch-Satterthwaite formula
+            int newDof = WelchSatterthwaiteDoF(minuend.Sem, subtrahend.Sem, minuend.Dof, subtrahend.Dof);
             return new DataPoint(minuend.Wavelength, newSignal, newSem, newStdDev, newDof);
         }
 
@@ -63,12 +63,31 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double newSignal = first.Signal + second.Signal;
             double newSem = SqSum(first.Sem, second.Sem);
             double newStdDev = SqSum(first.StdDev, second.StdDev);
-            int newDof = Math.Min(first.Dof, second.Dof); // conservative approach, TODO: Welch-Satterthwaite formula
+            int newDof = WelchSatterthwaiteDoF(first.Sem, second.Sem, first.Dof, second.Dof);
             return new DataPoint(first.Wavelength, newSignal, newSem, newStdDev, newDof);
         }
 
         private static double SqSum(double u1, double u2) => Math.Sqrt(u1 * u1 + u2 * u2);
-        
+
+        // Function to compute Welch–Satterthwaite degrees of freedom
+        static int WelchSatterthwaiteDoF(double s1, double s2, int dof1, int dof2)
+        {
+            // Convert standard deviations to variances 
+            double var1 = s1 * s1;
+            double var2 = s2 * s2;
+
+            // Numerator: (var1 + var2)^2
+            double numerator = Math.Pow(var1 + var2, 2);
+
+            // Denominator: (var1^2 / (n1 - 1)) + (var2^2 / (n2 - 1))
+            double denominator = (Math.Pow(var1, 2) / (dof1)) + (Math.Pow(var2, 2) / (dof2));
+
+            // Degrees of freedom
+            return (int)(numerator / denominator);
+        }
+
+
+
         private static double RelUncXXX(double x, double xr, double xb, double ux, double uxr, double uxb)
         {
             double v1 = 1.0 / (xr - xb);
