@@ -7,7 +7,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public string Name { get; set; } = "Spectrum";
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
-        public double[] NoiseValues => dataPoints.Select(dp => dp.Noise).ToArray();
+        public double[] SemValues => dataPoints.Select(dp => dp.Sem).ToArray();
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
         public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
         public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
@@ -21,27 +21,27 @@ namespace Bev.Instruments.Thorlabs.Ccs
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
             {
                 var dp = spectrum.DataPoints[i];
-                dataPoints[i] = new DataPoint(dp.Wavelength, dp.Signal, dp.Noise, dp.StdDev, dp.Dof);
+                dataPoints[i] = new DataPoint(dp.Wavelength, dp.Signal, dp.Sem, dp.StdDev, dp.Dof);
             }
         }
 
         public Spectrum(DataPoint[] dataPoints) => this.dataPoints = dataPoints;
 
-        public Spectrum(double[] wavelength, double[] averageValues, double[] noiseValues, double[] stdDevValues)
+        public Spectrum(double[] wavelength, double[] averageValues, double[] semValues, double[] stdDevValues)
         {
             dataPoints = new DataPoint[wavelength.Length];
             for (int i = 0; i < wavelength.Length; i++)
             {
-                dataPoints[i] = new DataPoint(wavelength[i], averageValues[i], noiseValues[i], stdDevValues[i]);
+                dataPoints[i] = new DataPoint(wavelength[i], averageValues[i], semValues[i], stdDevValues[i]);
             }
         }
 
-        public Spectrum(double[] wavelength, double[] averageValues, double[] noiseValues, double[] stdDevValues, int[] dof)
+        public Spectrum(double[] wavelength, double[] averageValues, double[] semValues, double[] stdDevValues, int[] dof)
         {
             dataPoints = new DataPoint[wavelength.Length];
             for (int i = 0; i < wavelength.Length; i++)
             {
-                dataPoints[i] = new DataPoint(wavelength[i], averageValues[i], noiseValues[i], stdDevValues[i], dof[i]);
+                dataPoints[i] = new DataPoint(wavelength[i], averageValues[i], semValues[i], stdDevValues[i], dof[i]);
             }
         }
 

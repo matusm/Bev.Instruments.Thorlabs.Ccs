@@ -4,24 +4,24 @@
     {
         public double Wavelength { get; }
         public double Signal { get; }
-        public double Noise { get; }
+        public double Sem { get; }
         public double StdDev { get; }
         public int Dof { get; }
 
         public DataPoint(double wavelength, double signal) : this(wavelength, signal, 0, 0, int.MaxValue) { }
 
-        public DataPoint(double wavelength, double signal, double noise, double stdDev) : this(wavelength, signal, noise, stdDev, int.MaxValue) { }
+        public DataPoint(double wavelength, double signal, double sem, double stdDev) : this(wavelength, signal, sem, stdDev, int.MaxValue) { }
 
-        public DataPoint(double wavelength, double signal, double noise, double stdDev, int dof)
+        public DataPoint(double wavelength, double signal, double sem, double stdDev, int dof)
         {
             Wavelength = wavelength;
             Signal = signal;
-            Noise = noise;
+            Sem = sem;
             StdDev = stdDev;
             Dof = dof;
         }
 
-        public string ToCsvLine() => $"{Wavelength:F2},{Signal:F6},{Noise:F6},{StdDev:F6},{Dof}";
-        public string GetCsvHeader() => "Wavelength,Signal,Noise,StdDev,DoF";
+        public string ToCsvLine() => $"{Wavelength:F2},{Signal:F6},{Sem:F6},{StdDev:F6},{Dof}";
+        public string GetCsvHeader() => "Wavelength,Signal,SEM,StdDev,DoF";
     }
 }

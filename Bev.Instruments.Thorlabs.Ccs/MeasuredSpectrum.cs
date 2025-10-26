@@ -9,7 +9,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public string Name { get; set; } = "Measured Spectrum";
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
         public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
-        public double[] NoiseValues => dataPoints.Select(dp => dp.Noise).ToArray();
+        public double[] SemValues => dataPoints.Select(dp => dp.Sem).ToArray();
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
         public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
         public double[] MaxValues => dataPoints.Select(dp => dp.MaxSignal).ToArray();

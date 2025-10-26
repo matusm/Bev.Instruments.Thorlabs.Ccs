@@ -5,7 +5,7 @@
         string Name { get; set; }
         double[] Wavelengths { get; }
         double[] AverageValues { get; }
-        double[] NoiseValues { get; }
+        double[] SemValues { get; }
         double[] StdDevValues { get; }
         int[] Dof { get; }
         IDataPoint[] DataPoints { get; }

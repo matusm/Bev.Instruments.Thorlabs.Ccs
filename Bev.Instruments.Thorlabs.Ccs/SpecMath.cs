@@ -43,7 +43,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             {
                 wl[i] = signal.Wavelengths[i];
                 newSignal[i] = (signal.AverageValues[i] - bckgnd.AverageValues[i])/(reference.AverageValues[i] - bckgnd.AverageValues[i]);
-                newNoise[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.NoiseValues[i], reference.NoiseValues[i], bckgnd.NoiseValues[i]);
+                newNoise[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.SemValues[i], reference.SemValues[i], bckgnd.SemValues[i]);
                 newStdDev[i] = RelUncXXX(signal.AverageValues[i], reference.AverageValues[i], bckgnd.AverageValues[i], signal.StdDevValues[i], reference.StdDevValues[i], bckgnd.StdDevValues[i]); ;
             }
             return new Spectrum(wl, newSignal, newNoise, newStdDev);
@@ -52,19 +52,19 @@ namespace Bev.Instruments.Thorlabs.Ccs
         private static DataPoint Subtract(IDataPoint minuend, IDataPoint subtrahend)
         {
             double newSignal = minuend.Signal - subtrahend.Signal;
-            double newNoise = SqSum(minuend.Noise, subtrahend.Noise);
+            double newSem = SqSum(minuend.Sem, subtrahend.Sem);
             double newStdDev = SqSum(minuend.StdDev, subtrahend.StdDev);
             int newDof = Math.Min(minuend.Dof, subtrahend.Dof); // conservative approach, TODO: Welch-Satterthwaite formula
-            return new DataPoint(minuend.Wavelength, newSignal, newNoise, newStdDev, newDof);
+            return new DataPoint(minuend.Wavelength, newSignal, newSem, newStdDev, newDof);
         }
 
         private static DataPoint Add(IDataPoint first, IDataPoint second)
         {
             double newSignal = first.Signal + second.Signal;
-            double newNoise = SqSum(first.Noise, second.Noise);
+            double newSem = SqSum(first.Sem, second.Sem);
             double newStdDev = SqSum(first.StdDev, second.StdDev);
             int newDof = Math.Min(first.Dof, second.Dof); // conservative approach, TODO: Welch-Satterthwaite formula
-            return new DataPoint(first.Wavelength, newSignal, newNoise, newStdDev, newDof);
+            return new DataPoint(first.Wavelength, newSignal, newSem, newStdDev, newDof);
         }
 
         private static double SqSum(double u1, double u2) => Math.Sqrt(u1 * u1 + u2 * u2);
