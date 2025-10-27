@@ -8,7 +8,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
     {
         public string Name { get; set; } = "Measured Spectrum";
         public double[] Wavelengths => dataPoints.Select(dp => dp.Wavelength).ToArray();
-        public double[] AverageValues => dataPoints.Select(dp => dp.Signal).ToArray();
+        public double[] Values => dataPoints.Select(dp => dp.Value).ToArray();
         public double[] SemValues => dataPoints.Select(dp => dp.Sem).ToArray();
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
         public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
@@ -16,10 +16,12 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] MinValues => dataPoints.Select(dp => dp.MinSignal).ToArray();
         public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
 
-        public double MaximumSignal => GetMaximumSignal();
+        public double MaximumValue => GetMaximumValue();
+        public double MinimumValue => GetMinimumValue();
+
         public int NumberOfSpectra => dataPoints[0].Dof + 1;
         public int NumberOfPoints => dataPoints.Length;
-        public bool IsOverexposed => MaximumSignal >= 1;
+        public bool IsOverexposed => MaximumValue >= 1;
         public bool IsEmpty => NumberOfSpectra == 0;
 
         public MeasuredSpectrum(double[] wavelength)
@@ -27,12 +29,12 @@ namespace Bev.Instruments.Thorlabs.Ccs
             dataPoints = wavelength.Select(w => new MeasuredDataPoint(w)).ToArray();
         }
 
-        public void UpdateSignal(double[] signal)
+        public void UpdateSignal(double[] values)
         {
-            if (signal.Length != dataPoints.Length) throw new ArgumentException("Signal array length does not match data points length.");
-            for (int i = 0; i < signal.Length; i++)
+            if (values.Length != dataPoints.Length) throw new ArgumentException("Signal array length does not match data points length.");
+            for (int i = 0; i < values.Length; i++)
             {
-                dataPoints[i].UpdateSignal(signal[i]);
+                dataPoints[i].UpdateSignal(values[i]);
             }
         }
 
@@ -44,7 +46,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             }
         }
 
-        private double GetMaximumSignal()
+        private double GetMaximumValue()
         {
             StatisticPod sp = new StatisticPod();
             foreach (var dp in dataPoints)
@@ -52,6 +54,16 @@ namespace Bev.Instruments.Thorlabs.Ccs
                 sp.Update(dp.MaxSignal);
             }
             return sp.MaximumValue;
+        }
+
+        private double GetMinimumValue()
+        {
+            StatisticPod sp = new StatisticPod();
+            foreach (var dp in dataPoints)
+            {
+                sp.Update(dp.MinSignal);
+            }
+            return sp.MinimumValue;
         }
 
         private readonly MeasuredDataPoint[] dataPoints;

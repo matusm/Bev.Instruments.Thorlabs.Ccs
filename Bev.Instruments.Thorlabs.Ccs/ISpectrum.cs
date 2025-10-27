@@ -4,7 +4,7 @@
     {
         string Name { get; set; }
         double[] Wavelengths { get; }
-        double[] AverageValues { get; }
+        double[] Values { get; }
         double[] SemValues { get; }
         double[] StdDevValues { get; }
         int[] Dof { get; }

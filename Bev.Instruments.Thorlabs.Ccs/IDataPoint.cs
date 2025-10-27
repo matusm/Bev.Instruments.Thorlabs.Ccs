@@ -3,7 +3,7 @@
     public interface IDataPoint
     {
         double Wavelength { get; }
-        double Signal { get; }
+        double Value { get; }
         double Sem { get; } // standard error of the mean (SEM)
         double StdDev { get; }
         int Dof { get; }

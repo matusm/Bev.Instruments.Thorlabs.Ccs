@@ -36,11 +36,11 @@ namespace CCStest
                 spectrum.UpdateSignal(tlCcs.GetSingleScanData());
                 if (debug)
                 {
-                    Console.WriteLine($"Trying {tlCcs.GetIntegrationTime():F5} s -> {spectrum.MaximumSignal:F4}");
+                    Console.WriteLine($"Trying {tlCcs.GetIntegrationTime():F5} s -> {spectrum.MaximumValue:F4}");
                 }   
-                if (spectrum.MaximumSignal >= 0.49)
+                if (spectrum.MaximumValue >= 0.49)
                 {
-                    optimalIntegrationTime = tlCcs.GetIntegrationTime() * (targetSignal / spectrum.MaximumSignal);
+                    optimalIntegrationTime = tlCcs.GetIntegrationTime() * (targetSignal / spectrum.MaximumValue);
                     break;
                 }
                 integrationTime *= 2;

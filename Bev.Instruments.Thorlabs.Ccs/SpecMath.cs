@@ -13,7 +13,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             for (int i = 0; i < newDataPoints.Length; i++)
             {
                 IDataPoint point = spectrum.DataPoints[i];
-                newDataPoints[i] = new DataPoint(point.Wavelength, point.Signal * weights[i], point.Sem * weights[i], point.StdDev * weights[i], point.Dof);
+                newDataPoints[i] = new DataPoint(point.Wavelength, point.Value * weights[i], point.Sem * weights[i], point.StdDev * weights[i], point.Dof);
             }
             Spectrum weightedSpectrum = new Spectrum(newDataPoints);
             weightedSpectrum.Name = $"Weighted[{spectrum.Name}]";
@@ -63,9 +63,10 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return ratio;   
         }
 
+        #region Private Methods
         private static DataPoint Subtract(IDataPoint minuend, IDataPoint subtrahend)
         {
-            double newSignal = minuend.Signal - subtrahend.Signal;
+            double newSignal = minuend.Value - subtrahend.Value;
             double newSem = SqSum(minuend.Sem, subtrahend.Sem);
             double newStdDev = SqSum(minuend.StdDev, subtrahend.StdDev);
             int newDof = WelchSatterthwaiteSum(minuend.Sem, subtrahend.Sem, minuend.Dof, subtrahend.Dof);
@@ -74,7 +75,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         private static DataPoint Add(IDataPoint first, IDataPoint second)
         {
-            double newSignal = first.Signal + second.Signal;
+            double newSignal = first.Value + second.Value;
             double newSem = SqSum(first.Sem, second.Sem);
             double newStdDev = SqSum(first.StdDev, second.StdDev);
             int newDof = WelchSatterthwaiteSum(first.Sem, second.Sem, first.Dof, second.Dof);
@@ -83,11 +84,11 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         private static DataPoint ComputeBiasCorrectedRatio(IDataPoint signal, IDataPoint reference, IDataPoint bckgnd)
         {
-            double correctedSignal = signal.Signal - bckgnd.Signal;
-            double correctedReference = reference.Signal - bckgnd.Signal;
+            double correctedSignal = signal.Value - bckgnd.Value;
+            double correctedReference = reference.Value - bckgnd.Value;
             double ratio = correctedSignal / correctedReference;
-            double newSem = BiasCorrectedRatioUncertainty(signal.Signal, reference.Signal, bckgnd.Signal, signal.Sem, reference.Sem, bckgnd.Sem);
-            double newStdDev = BiasCorrectedRatioUncertainty(signal.Signal, reference.Signal, bckgnd.Signal, signal.StdDev, reference.StdDev, bckgnd.StdDev);
+            double newSem = BiasCorrectedRatioUncertainty(signal.Value, reference.Value, bckgnd.Value, signal.Sem, reference.Sem, bckgnd.Sem);
+            double newStdDev = BiasCorrectedRatioUncertainty(signal.Value, reference.Value, bckgnd.Value, signal.StdDev, reference.StdDev, bckgnd.StdDev);
             int newDof = WelchSatterthwaiteRatio(newSem, signal.Sem, reference.Sem, bckgnd.Sem, signal.Dof, reference.Dof, bckgnd.Dof); 
             return new DataPoint(signal.Wavelength, ratio, newSem, newStdDev, newDof);
         }
@@ -119,5 +120,8 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double u3 = v2 * (xb - x) * uxr;
             return Math.Sqrt((u1 * u1) + (u2 * u2) + (u3 * u3) );
         }
+        
+       #endregion
+
     }
 }
