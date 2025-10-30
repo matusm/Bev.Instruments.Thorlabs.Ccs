@@ -22,23 +22,26 @@ namespace CCStest
             Console.WriteLine($"Max Wavelength:           {tlCcs.MaximumWavelength:F2} nm");
             Console.WriteLine();
 
-            Console.WriteLine("Estimating optimal integration time...");
-            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, true);
-            Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
-            Console.WriteLine();
-            tlCcs.SetIntegrationTime(optimalIntegrationTime);
+            //Console.WriteLine("Estimating optimal integration time...");
+            //double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, true);
+            //Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
+            //Console.WriteLine();
+            //tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
-            int nSamples = 20;
+
+
+            tlCcs.SetIntegrationTime(0.01);
+            int nSamples = 200;
 
             MeasuredSpectrum reference = Helper.GetSpectrumUI("reference spectrum", tlCcs, nSamples);
-            MeasuredSpectrum filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
+            //MeasuredSpectrum filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
             MeasuredSpectrum dark = Helper.GetSpectrumUI("dark spectrum", tlCcs, nSamples*2);
 
-            var transmission = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
-            //var signal = SpecMath.Subtract(reference, dark);
+            //var transmission = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
+            var signal = SpecMath.Subtract(reference, dark);
 
-            Console.WriteLine(transmission.ToCsvLines());
-            Console.WriteLine(transmission.Name);
+            Console.WriteLine(signal.ToCsvLines());
+            Console.WriteLine(signal.Name);
 
         }
 

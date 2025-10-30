@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Masker.cs" />
     <Compile Include="Spectrum.cs" />
     <Compile Include="DataPoint.cs" />
     <Compile Include="IDataPoint.cs" />
