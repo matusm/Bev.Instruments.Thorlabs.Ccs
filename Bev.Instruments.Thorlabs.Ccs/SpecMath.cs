@@ -4,21 +4,6 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public static class SpecMath
     {
-        public static Spectrum Weighting(ISpectrum spectrum, double[] weights)
-        {
-            if (spectrum.NumberOfPoints != weights.Length)
-                throw new ArgumentException("Spectrum and weights must have the same number of points.");
-
-            DataPoint[] newDataPoints = new DataPoint[spectrum.NumberOfPoints];
-            for (int i = 0; i < newDataPoints.Length; i++)
-            {
-                IDataPoint point = spectrum.DataPoints[i];
-                newDataPoints[i] = new DataPoint(point.Wavelength, point.Value * weights[i], point.Sem * weights[i], point.StdDev * weights[i], point.Dof);
-            }
-            Spectrum weightedSpectrum = new Spectrum(newDataPoints);
-            weightedSpectrum.Name = $"Weighted[{spectrum.Name}]";
-            return weightedSpectrum;
-        }
 
         public static Spectrum Subtract(ISpectrum minuend, ISpectrum subtrahend)
         {

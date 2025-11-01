@@ -1,84 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
-    internal enum MaskMode
+    public enum TransitionType
     {
-        LongPass,
-        ShortPass
+        Linear,
+        Quadratic,
+        Cubic,
+        Quintic
     }
 
     internal static class Masker
     {
-
-        public static Spectrum ApplyMask(ISpectrum spectrum, double w0, double hw, MaskMode mode = MaskMode.LongPass)
+        public static Spectrum ApplyShortpassMask(ISpectrum spectrum, double cutoff, double hw, TransitionType transitionType = TransitionType.Linear)
         {
-            double[] mask;
-            switch (mode)
-            {
-                case MaskMode.ShortPass:
-                    mask = SyntheticShortpassFilter(spectrum.Wavelengths, w0, hw);
-                    break;
-                case MaskMode.LongPass:
-                    mask = SynthLongpassFilter(spectrum.Wavelengths, w0, hw);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unknown MaskMode");
-            }
-            return SpecMath.Weighting(spectrum, mask);
+            double[] mask = GetShortpassMask(spectrum.Wavelengths, cutoff, hw, transitionType);
+            return Weighting(spectrum, mask);
         }
 
-        private static double[] SynthLongpassFilter(double[] wavelengths, double w0, double hw)
+        public static Spectrum ApplyLongpassMask(ISpectrum spectrum, double cutoff, double hw, TransitionType transitionType = TransitionType.Linear)
+        {
+            double[] mask = GetLongpassMask(spectrum.Wavelengths, cutoff, hw, transitionType);
+            return Weighting(spectrum, mask);
+        }
+
+        // the user must ensure that cutoffLow < cutoffHigh and the transition widths do not overlap
+        public static Spectrum ApplyBandpassMask(ISpectrum spectrum, double cutoffLow, double cutoffHigh, double hwLow, double hwHigh, TransitionType transitionType = TransitionType.Linear)
+        {
+            double[] mask = GetBandpassMask(spectrum.Wavelengths, cutoffLow, cutoffHigh, hwLow, hwHigh, transitionType);
+            return Weighting(spectrum, mask);
+        }
+
+        public static Spectrum Weighting(ISpectrum spectrum, double[] weights)
+        {
+            if (spectrum.NumberOfPoints != weights.Length)
+                throw new ArgumentException("Spectrum and weights must have the same number of points.");
+
+            DataPoint[] newDataPoints = new DataPoint[spectrum.NumberOfPoints];
+            for (int i = 0; i < newDataPoints.Length; i++)
+            {
+                IDataPoint point = spectrum.DataPoints[i];
+                newDataPoints[i] = new DataPoint(point.Wavelength, point.Value * weights[i], point.Sem * weights[i], point.StdDev * weights[i], point.Dof);
+            }
+            Spectrum weightedSpectrum = new Spectrum(newDataPoints);
+            weightedSpectrum.Name = $"Weighted[{spectrum.Name}]";
+            return weightedSpectrum;
+        }
+
+        private static double[] GetLongpassMask(double[] wavelengths, double cutoff, double hw, TransitionType transitionType)
         {
             double[] mask = new double[wavelengths.Length];
-            double slope = 0.5 / hw;
             for (int i = 0; i < wavelengths.Length; i++)
             {
-                var w = wavelengths[i] - w0;
-                var m0 = 0.5 + slope * w;
-                if (m0 < 0) m0 = 0.0;
-                if (m0 > 1) m0 = 1.0;
-                mask[i] = m0;
+                double w = wavelengths[i] - cutoff;
+                switch (transitionType)
+                {
+                    case TransitionType.Linear:
+                        mask[i] = SigmoidLinear(w, hw);
+                        break;
+                    case TransitionType.Quadratic:
+                        mask[i] = SigmoidQuadratic(w, hw);
+                        break;
+                    case TransitionType.Cubic:
+                        mask[i] = SigmoidCubic(w, hw);
+                        break;
+                    case TransitionType.Quintic:
+                        mask[i] = SigmoidQuintic(w, hw);
+                        break;
+                }
             }
             return mask;
         }
 
-        private static double[] SynthLongpassFilterQ(double[] wavelengths, double w0, double hw)
+        private static double[] GetShortpassMask(double[] wavelengths, double cutoff, double hw, TransitionType transitionType)
         {
-            double[] mask = new double[wavelengths.Length];
-            for (int i = 0; i < wavelengths.Length; i++)
-            {
-                double w = wavelengths[i] - w0;
-                double m0 = 0.0;
-                if (w < -hw) m0 = 0.0;
-                if (w > hw) m0 = 1.0;
-                if (w >= -hw && w < 0)
-                {
-                    m0 = w * w * 0.5 / (hw * hw) + w / hw + 0.5;
-                }
-                if (w >= 0 && w <= hw)
-                {
-                    m0 = -w * w * 0.5 / (hw * hw) + w / hw + 0.5;
-                }
-                if (m0 < 0) m0 = 0.0;
-                if (m0 > 1) m0 = 1.0;
-                mask[i] = m0;
-            }
-            return mask;
+            return InvertMask(GetLongpassMask(wavelengths, cutoff, hw, transitionType));
         }
 
-
-        private static double[] SyntheticShortpassFilter(double[] wavelengths, double w0, double hw)
+        // the user must ensure that cutoffLow < cutoffHigh and the transition widths do not overlap
+        private static double[] GetBandpassMask(double[] wavelengths, double cutoffLow, double cutoffHigh, double hwLow, double hwHigh, TransitionType transitionType)
         {
-            return InvertFilter(SynthLongpassFilter(wavelengths, w0, hw));
+            double[] lowPass = GetLongpassMask(wavelengths, cutoffLow, hwLow, transitionType);
+            double[] highPass = GetShortpassMask(wavelengths, cutoffHigh, hwHigh, transitionType);
+            return CombineMasks(lowPass, highPass);
         }
 
-
-        private static double[] InvertFilter(double[] f)
+        private static double[] InvertMask(double[] f)
         {
             double[] mask = new double[f.Length];
             for (int i = 0; i < f.Length; i++)
@@ -88,7 +95,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return mask;
         }
 
-        private static double[] CombineFilter(double[] f1, double[] f2)
+        private static double[] CombineMasks(double[] f1, double[] f2)
         {
             if (f1.Length != f2.Length)
                 throw new ArgumentException("Filter lengths do not match");
@@ -100,5 +107,57 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return mask;
         }
 
+        private static double SigmoidLinear(double w, double hw)
+        {
+            double m0 = 0.5 + (w / hw) * 0.5;
+            return ClipMask(m0);
+        }
+
+        private static double SigmoidQuadratic(double w, double hw)
+        {
+            double m0 = 0.0;
+            if (w < -hw) m0 = 0.0;
+            if (w > hw) m0 = 1.0;
+            if (w >= -hw && w < 0)
+            {
+                m0 = w * w * 0.5 / (hw * hw) + w / hw + 0.5;
+            }
+            if (w >= 0 && w <= hw)
+            {
+                m0 = -w * w * 0.5 / (hw * hw) + w / hw + 0.5;
+            }
+            return ClipMask(m0);
+        }
+
+        private static double SigmoidCubic(double w, double hw)
+        {
+            double m0 = 0.0;
+            if (w <= -hw) m0 = 0.0;
+            if (w >= hw) m0 = 1.0;
+            if (w > -hw && w < hw)
+            {
+                m0 = w / (4 * hw * hw * hw) * (3 * hw * hw - w * w) + 0.5;
+            }
+            return ClipMask(m0);
+        }
+
+        private static double SigmoidQuintic(double w, double hw)
+        {
+            double m0 = 0.0;
+            if (w <= -hw) m0 = 0.0;
+            if (w >= hw) m0 = 1.0;
+            if (w > -hw && w < hw)
+            {
+                m0 = w / (16 * hw * hw * hw * hw * hw) * (3 * w * w * w * w - 10 * w * w * hw * hw + 15 * hw * hw * hw * hw) + 0.5;
+            }
+            return ClipMask(m0);
+        }
+
+        private static double ClipMask(double m0)
+        {
+            if (m0 < 0) m0 = 0.0;
+            if (m0 > 1) m0 = 1.0;
+            return m0;
+        }
     }
 }
