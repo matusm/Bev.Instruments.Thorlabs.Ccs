@@ -26,33 +26,35 @@ namespace CCStest
             Console.WriteLine();
 
             Console.WriteLine("Estimating optimal integration time...");
-            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, true);
+            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, false);
             Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
             Console.WriteLine();
             tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
-            int nSamples = 40;
+            int nSamples = 5;
 
             MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
             MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
             MeasuredSpectrum dark = new MeasuredSpectrum(tlCcs.Wavelengths);
 
             Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #1", tlCcs);
-            Console.WriteLine(reference);
-            Helper.UpdateSpectrumUI(filter, nSamples, "sample spectrum #1", tlCcs);
-            Console.WriteLine(filter);
-            Helper.UpdateSpectrumUI(dark, nSamples*2, "dark spectrum #1", tlCcs);
-            Console.WriteLine(dark);
-            Helper.UpdateSpectrumUI(filter, nSamples, "sample spectrum #2", tlCcs);
-            Console.WriteLine(filter);
-            Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #2", tlCcs);
-            Console.WriteLine(reference);
 
-            //reference = Helper.GetSpectrumUI("reference spectrum", tlCcs, nSamples);
-            //filter = Helper.GetSpectrumUI("sample spectrum", tlCcs, nSamples);
-            //dark = Helper.GetSpectrumUI("dark spectrum", tlCcs, nSamples);
+            Helper.UpdateSpectrumUI(filter, nSamples, "sample spectrum #1", tlCcs);
+
+            Helper.UpdateSpectrumUI(dark, nSamples*2, "dark spectrum #1", tlCcs);
+
+            Helper.UpdateSpectrumUI(filter, nSamples, "sample spectrum #2", tlCcs);
+
+            Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #2", tlCcs);
 
             Spectrum signal = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
+
+            Console.WriteLine();
+            Console.WriteLine($"Reference spectrum: '{reference}'");
+            Console.WriteLine($"Sample spectrum: '{filter}'");
+            Console.WriteLine($"Dark spectrum: '{dark}'");
+            Console.WriteLine($"Computed signal spectrum: '{signal}'");
+            Console.WriteLine();
 
             string csvString = signal.ToCsvLines();
             string fileName = $"spectrum_{DateTime.Now:yyyyMMdd_HHmmss}.csv";

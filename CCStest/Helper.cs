@@ -5,35 +5,31 @@ namespace CCStest
 {
     internal static class Helper
     {
+        // Updates the provided MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
         internal static void UpdateSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, TlCcs tlCcs)
         {
             ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
-            Console.WriteLine($"Press <ENTER> to start measurement of {message}.");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            Console.WriteLine($"Press any key to start measurement of {message} - 's' to skip");
+            if (Console.ReadKey(true).Key != ConsoleKey.S)
             {
                 for (int i = 0; i < numberSamples; i++)
                 {
                     spectrum.UpdateSignal(tlCcs.GetSingleScanData());
                     consoleProgressBar.Report(i + 1, numberSamples);
                 }
+                spectrum.Name = $"{message}";
             }
-            spectrum.Name = $"{message} n={spectrum.NumberOfSpectra} t={tlCcs.GetIntegrationTime()}";
+            else
+            {
+                Console.WriteLine($"Skipping measurement of {message}");
+            }
         }
 
-        internal static MeasuredSpectrum GetSpectrumUI(string message, TlCcs tlCcs, int numberSamples)
+        // Creates and returns a MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
+        internal static MeasuredSpectrum GetSpectrumUI(int numberSamples, string message, TlCcs tlCcs)
         {
-            ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
             MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
-            Console.WriteLine($"Press <ENTER> to start measurement of {message}.");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
-            {
-                for (int i = 0; i < numberSamples; i++)
-                {
-                    spectrum.UpdateSignal(tlCcs.GetSingleScanData());
-                    consoleProgressBar.Report(i + 1, numberSamples);
-                }
-            }
-            spectrum.Name = $"{message} n={spectrum.NumberOfSpectra} t={tlCcs.GetIntegrationTime()}";
+            UpdateSpectrumUI(spectrum, numberSamples, message, tlCcs);
             return spectrum;
         }
 

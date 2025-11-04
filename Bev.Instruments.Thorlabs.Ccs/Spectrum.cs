@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using At.Matus.StatisticPod;
+using System.Linq;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
@@ -12,6 +13,9 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
         public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
         public int NumberOfPoints => dataPoints.Length;
+
+        public double MaximumValue => GetMaximumValue();
+        public double MinimumValue => GetMinimumValue();
 
         // constructor that copies data from another Spectrum or MeasuredSpectrum
         public Spectrum(ISpectrum spectrum)
@@ -43,6 +47,31 @@ namespace Bev.Instruments.Thorlabs.Ccs
             {
                 dataPoints[i] = new DataPoint(wavelength[i], values[i], semValues[i], stdDevValues[i], dof[i]);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{Name}: computed spectrum, MinSignal={MinimumValue:0.000}, MaxSignal={MaximumValue:0.000}";
+        }
+
+        private double GetMaximumValue()
+        {
+            StatisticPod sp = new StatisticPod();
+            foreach (var dp in dataPoints)
+            {
+                sp.Update(dp.Value);
+            }
+            return sp.MaximumValue;
+        }
+
+        private double GetMinimumValue()
+        {
+            StatisticPod sp = new StatisticPod();
+            foreach (var dp in dataPoints)
+            {
+                sp.Update(dp.Value);
+            }
+            return sp.MinimumValue;
         }
 
         private readonly DataPoint[] dataPoints;

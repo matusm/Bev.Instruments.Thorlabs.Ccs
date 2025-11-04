@@ -48,7 +48,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         public override string ToString()
         {
-            return $"{Name}: {NumberOfPoints} points, {NumberOfSpectra} spectra, Min={MinimumValue:0.000}, Max={MaximumValue:0.000}";
+            return $"{Name}: {NumberOfSpectra} spectra, MinSignal={MinimumValue:0.000}, MaxSignal={MaximumValue:0.000}";
         }
 
         private double GetMaximumValue()
