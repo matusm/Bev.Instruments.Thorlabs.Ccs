@@ -5,8 +5,24 @@ namespace CCStest
 {
     internal static class Helper
     {
+        internal static void UpdateSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, TlCcs tlCcs)
+        {
+            ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
+            Console.WriteLine($"Press <ENTER> to start measurement of {message}.");
+            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            {
+                for (int i = 0; i < numberSamples; i++)
+                {
+                    spectrum.UpdateSignal(tlCcs.GetSingleScanData());
+                    consoleProgressBar.Report(i + 1, numberSamples);
+                }
+            }
+            spectrum.Name = $"{message} n={spectrum.NumberOfSpectra} t={tlCcs.GetIntegrationTime()}";
+        }
+
         internal static MeasuredSpectrum GetSpectrumUI(string message, TlCcs tlCcs, int numberSamples)
         {
+            ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
             MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
             Console.WriteLine($"Press <ENTER> to start measurement of {message}.");
             if (Console.ReadKey().Key == ConsoleKey.Enter)
@@ -14,11 +30,10 @@ namespace CCStest
                 for (int i = 0; i < numberSamples; i++)
                 {
                     spectrum.UpdateSignal(tlCcs.GetSingleScanData());
-                    Console.Write(".");
+                    consoleProgressBar.Report(i + 1, numberSamples);
                 }
-                Console.WriteLine();
             }
-            spectrum.Name = $"{message} n={numberSamples} t={tlCcs.GetIntegrationTime()}";
+            spectrum.Name = $"{message} n={spectrum.NumberOfSpectra} t={tlCcs.GetIntegrationTime()}";
             return spectrum;
         }
 

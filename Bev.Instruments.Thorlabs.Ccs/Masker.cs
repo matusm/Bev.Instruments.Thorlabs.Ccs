@@ -110,7 +110,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         private static double SigmoidLinear(double w, double hw)
         {
             double m0 = 0.5 + (w / hw) * 0.5;
-            return ClipMask(m0);
+            return Clamp(m0);
         }
 
         private static double SigmoidQuadratic(double w, double hw)
@@ -126,7 +126,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             {
                 m0 = -w * w * 0.5 / (hw * hw) + w / hw + 0.5;
             }
-            return ClipMask(m0);
+            return Clamp(m0);
         }
 
         private static double SigmoidCubic(double w, double hw)
@@ -138,7 +138,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             {
                 m0 = w / (4 * hw * hw * hw) * (3 * hw * hw - w * w) + 0.5;
             }
-            return ClipMask(m0);
+            return Clamp(m0);
         }
 
         private static double SigmoidQuintic(double w, double hw)
@@ -150,10 +150,10 @@ namespace Bev.Instruments.Thorlabs.Ccs
             {
                 m0 = w / (16 * hw * hw * hw * hw * hw) * (3 * w * w * w * w - 10 * w * w * hw * hw + 15 * hw * hw * hw * hw) + 0.5;
             }
-            return ClipMask(m0);
+            return Clamp(m0);
         }
 
-        private static double ClipMask(double m0)
+        private static double Clamp(double m0)
         {
             if (m0 < 0) m0 = 0.0;
             if (m0 > 1) m0 = 1.0;

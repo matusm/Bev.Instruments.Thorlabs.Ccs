@@ -18,6 +18,8 @@ namespace CCStest
         internal static string ToThorlabsCsvLines(this ISpectrum spectrum)
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine("[Header]");
+            sb.AppendLine($"{spectrum.Name}");
             sb.AppendLine("[Data]");
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
             {
