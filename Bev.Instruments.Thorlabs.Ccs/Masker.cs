@@ -10,7 +10,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         Quintic
     }
 
-    internal static class Masker
+    public static class Masker
     {
         public static Spectrum ApplyShortpassMask(ISpectrum spectrum, double cutoff, double hw, TransitionType transitionType = TransitionType.Linear)
         {

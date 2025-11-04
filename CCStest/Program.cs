@@ -31,7 +31,7 @@ namespace CCStest
             Console.WriteLine();
             tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
-            int nSamples = 5;
+            int nSamples = 4;
 
             MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
             MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
@@ -49,14 +49,16 @@ namespace CCStest
 
             Spectrum signal = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
 
+            var signalMasked = Masker.ApplyBandpassMask(signal, 400, 700, 10, 10);
+
             Console.WriteLine();
             Console.WriteLine($"Reference spectrum: '{reference}'");
             Console.WriteLine($"Sample spectrum: '{filter}'");
             Console.WriteLine($"Dark spectrum: '{dark}'");
-            Console.WriteLine($"Computed signal spectrum: '{signal}'");
+            Console.WriteLine($"Computed signal spectrum: '{signalMasked}'");
             Console.WriteLine();
 
-            string csvString = signal.ToCsvLines();
+            string csvString = signalMasked.ToCsvLines();
             string fileName = $"spectrum_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
             string outPath = Path.Combine(Environment.CurrentDirectory, fileName);
             File.WriteAllText(outPath, csvString);
