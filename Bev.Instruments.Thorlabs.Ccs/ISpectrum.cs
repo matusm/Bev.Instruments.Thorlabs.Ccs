@@ -7,7 +7,6 @@
         double[] Values { get; }
         double[] SemValues { get; }
         double[] StdDevValues { get; }
-        int[] Dof { get; }
         IDataPoint[] DataPoints { get; }
         int NumberOfPoints { get; }
     }

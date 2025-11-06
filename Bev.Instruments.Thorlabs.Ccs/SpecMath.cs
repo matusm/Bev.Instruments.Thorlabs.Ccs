@@ -54,8 +54,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double newSignal = minuend.Value - subtrahend.Value;
             double newSem = SqSum(minuend.Sem, subtrahend.Sem);
             double newStdDev = SqSum(minuend.StdDev, subtrahend.StdDev);
-            int newDof = WelchSatterthwaiteSum(minuend.Sem, subtrahend.Sem, minuend.Dof, subtrahend.Dof);
-            return new DataPoint(minuend.Wavelength, newSignal, newSem, newStdDev, newDof);
+            return new DataPoint(minuend.Wavelength, newSignal, newSem, newStdDev);
         }
 
         private static DataPoint Add(IDataPoint first, IDataPoint second)
@@ -63,8 +62,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double newSignal = first.Value + second.Value;
             double newSem = SqSum(first.Sem, second.Sem);
             double newStdDev = SqSum(first.StdDev, second.StdDev);
-            int newDof = WelchSatterthwaiteSum(first.Sem, second.Sem, first.Dof, second.Dof);
-            return new DataPoint(first.Wavelength, newSignal, newSem, newStdDev, newDof);
+            return new DataPoint(first.Wavelength, newSignal, newSem, newStdDev);
         }
 
         private static DataPoint ComputeBiasCorrectedRatio(IDataPoint signal, IDataPoint reference, IDataPoint bckgnd)
@@ -74,27 +72,10 @@ namespace Bev.Instruments.Thorlabs.Ccs
             double ratio = correctedSignal / correctedReference;
             double newSem = BiasCorrectedRatioUncertainty(signal.Value, reference.Value, bckgnd.Value, signal.Sem, reference.Sem, bckgnd.Sem);
             double newStdDev = BiasCorrectedRatioUncertainty(signal.Value, reference.Value, bckgnd.Value, signal.StdDev, reference.StdDev, bckgnd.StdDev);
-            int newDof = WelchSatterthwaiteRatio(newSem, signal.Sem, reference.Sem, bckgnd.Sem, signal.Dof, reference.Dof, bckgnd.Dof); 
-            return new DataPoint(signal.Wavelength, ratio, newSem, newStdDev, newDof);
+            return new DataPoint(signal.Wavelength, ratio, newSem, newStdDev);
         }
 
         private static double SqSum(double u1, double u2) => Math.Sqrt(u1 * u1 + u2 * u2);
-
-        private static int WelchSatterthwaiteSum(double s1, double s2, int dof1, int dof2)
-        {
-            double var1 = s1 * s1;
-            double var2 = s2 * s2;
-            double numerator = Math.Pow(var1 + var2, 2);
-            double denominator = (Math.Pow(var1, 2) / (dof1)) + (Math.Pow(var2, 2) / (dof2));
-            return (int)(numerator / denominator);
-        }
-
-        private static int WelchSatterthwaiteRatio(double uc, double u1, double u2, double u3, int dof1, int dof2, int dof3)
-        {
-            double numerator = Math.Pow(uc, 4);
-            double denominator = (Math.Pow(u1, 4) / dof1) + (Math.Pow(u2, 4) / dof2) + (Math.Pow(u3, 4) / dof3);
-            return (int)(numerator / denominator);
-        }
 
         private static double BiasCorrectedRatioUncertainty(double x, double xr, double xb, double ux, double uxr, double uxb)
         {
@@ -106,7 +87,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return Math.Sqrt((u1 * u1) + (u2 * u2) + (u3 * u3) );
         }
         
-       #endregion
+        #endregion
 
     }
 }

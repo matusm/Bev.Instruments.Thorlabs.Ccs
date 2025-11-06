@@ -10,7 +10,6 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] Values => dataPoints.Select(dp => dp.Value).ToArray();
         public double[] SemValues => dataPoints.Select(dp => dp.Sem).ToArray();
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
-        public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
         public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
         public int NumberOfPoints => dataPoints.Length;
 
@@ -25,7 +24,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
             {
                 var dp = spectrum.DataPoints[i];
-                dataPoints[i] = new DataPoint(dp.Wavelength, dp.Value, dp.Sem, dp.StdDev, dp.Dof);
+                dataPoints[i] = new DataPoint(dp.Wavelength, dp.Value, dp.Sem, dp.StdDev);
             }
         }
 
@@ -37,15 +36,6 @@ namespace Bev.Instruments.Thorlabs.Ccs
             for (int i = 0; i < wavelength.Length; i++)
             {
                 dataPoints[i] = new DataPoint(wavelength[i], values[i], semValues[i], stdDevValues[i]);
-            }
-        }
-
-        public Spectrum(double[] wavelength, double[] values, double[] semValues, double[] stdDevValues, int[] dof)
-        {
-            dataPoints = new DataPoint[wavelength.Length];
-            for (int i = 0; i < wavelength.Length; i++)
-            {
-                dataPoints[i] = new DataPoint(wavelength[i], values[i], semValues[i], stdDevValues[i], dof[i]);
             }
         }
 

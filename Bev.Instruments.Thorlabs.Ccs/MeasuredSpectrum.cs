@@ -11,7 +11,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] Values => dataPoints.Select(dp => dp.Value).ToArray();
         public double[] SemValues => dataPoints.Select(dp => dp.Sem).ToArray();
         public double[] StdDevValues => dataPoints.Select(dp => dp.StdDev).ToArray();
-        public int[] Dof => dataPoints.Select(dp => dp.Dof).ToArray();
+        public int[] SampleSize => dataPoints.Select(dp => dp.SampleSize).ToArray();
         public double[] MaxValues => dataPoints.Select(dp => dp.MaxSignal).ToArray();
         public double[] MinValues => dataPoints.Select(dp => dp.MinSignal).ToArray();
         public IDataPoint[] DataPoints => dataPoints.Cast<IDataPoint>().ToArray();
@@ -19,7 +19,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double MaximumValue => GetMaximumValue();
         public double MinimumValue => GetMinimumValue();
 
-        public int NumberOfSpectra => dataPoints[0].Dof + 1;
+        public int NumberOfSpectra => dataPoints[0].SampleSize;
         public int NumberOfPoints => dataPoints.Length;
         public bool IsOverexposed => MaximumValue >= 1;
         public bool IsEmpty => NumberOfSpectra == 0;

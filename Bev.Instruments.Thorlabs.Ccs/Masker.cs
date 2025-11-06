@@ -40,7 +40,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             for (int i = 0; i < newDataPoints.Length; i++)
             {
                 IDataPoint point = spectrum.DataPoints[i];
-                newDataPoints[i] = new DataPoint(point.Wavelength, point.Value * weights[i], point.Sem * weights[i], point.StdDev * weights[i], point.Dof);
+                newDataPoints[i] = new DataPoint(point.Wavelength, point.Value * weights[i], point.Sem * weights[i], point.StdDev * weights[i]);
             }
             Spectrum weightedSpectrum = new Spectrum(newDataPoints);
             weightedSpectrum.Name = $"Weighted[{spectrum.Name}]";

@@ -7,11 +7,11 @@ namespace Bev.Instruments.Thorlabs.Ccs
     {
         public double Wavelength { get; }
         public double Value => sp.AverageValue;
-        public double Sem => StdDev / Math.Sqrt(Dof + 1);
+        public double Sem => StdDev / Math.Sqrt(SampleSize);
         public double StdDev => sp.StandardDeviation;
         public double MaxSignal => sp.MaximumValue;
         public double MinSignal => sp.MinimumValue;
-        public int Dof => (int)sp.SampleSize - 1;
+        public int SampleSize => (int)sp.SampleSize;
 
         public MeasuredDataPoint(double wavelength) => Wavelength = wavelength;
 
@@ -19,9 +19,9 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         public void Clear() => sp.Restart();
 
-        public string ToCsvLine() => $"{Wavelength:F2},{Value:F6},{MinSignal:F6},{MaxSignal:F6},{Sem:F6},{StdDev:F6},{Dof}";
+        public string ToCsvLine() => $"{Wavelength:F2},{Value:F6},{MinSignal:F6},{MaxSignal:F6},{Sem:F6},{StdDev:F6},{SampleSize}";
 
-        public string GetCsvHeader() => "Wavelength,Value,MinSignal,MaxSignal,SEM,StdDev,DoF";
+        public string GetCsvHeader() => "Wavelength,Value,MinSignal,MaxSignal,SEM,StdDev,Samplesize";
 
         private readonly StatisticPod sp = new StatisticPod();
 
