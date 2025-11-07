@@ -1,7 +1,7 @@
 ﻿using System;
 using Bev.Instruments.Thorlabs.Ccs;
 
-namespace CCStest
+namespace CcsFilter
 {
     internal static class Helper
     {
@@ -19,7 +19,7 @@ namespace CCStest
                     for (int j = 0; j < rawData.Length; j++)
                     {
                         rawData[j] = intData[j];
-                    }   
+                    }
                     spectrum.UpdateSignal(rawData);
                     consoleProgressBar.Report(i + 1, numberSamples);
                 }
@@ -29,14 +29,6 @@ namespace CCStest
             {
                 Console.WriteLine($"Skipping measurement of {message}");
             }
-        }
-
-        // Creates and returns a MeasuredSpectrum by taking numberSamples raw scans from the tlCcs device.
-        internal static MeasuredSpectrum GetRawSpectrumUI(int numberSamples, string message, TlCcs tlCcs)
-        {
-            MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
-            UpdateRawSpectrumUI(spectrum, numberSamples, message, tlCcs);
-            return spectrum;
         }
 
         // Updates the provided MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
@@ -82,7 +74,7 @@ namespace CCStest
                 if (debug)
                 {
                     Console.WriteLine($"Trying {tlCcs.GetIntegrationTime():F5} s -> {spectrum.MaximumValue:F4}");
-                }   
+                }
                 if (spectrum.MaximumValue >= 0.49)
                 {
                     optimalIntegrationTime = tlCcs.GetIntegrationTime() * (targetSignal / spectrum.MaximumValue);

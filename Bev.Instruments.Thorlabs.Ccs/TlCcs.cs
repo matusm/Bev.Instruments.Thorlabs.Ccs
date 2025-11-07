@@ -5,8 +5,19 @@ using Thorlabs.ccs.interop64;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
+    public enum ProductID
+    {
+        CCS100 = 0x8081,
+        CCS125 = 0x8083,
+        CCS150 = 0x8085,
+        CCS175 = 0x8087,
+        CCS200 = 0x8089
+    }
+
     public class TlCcs
     {
+        private const int N_PIXELS = 3648;
+
         public string ResourceName { get; }
         public string InstrumentManufacturer { get; private set; } = "";
         public string InstrumentType { get; private set; } = "";
@@ -45,7 +56,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] GetSingleScanData()
         {
             //TODO try catch
-            double[] intensity = new double[nPixels];
+            double[] intensity = new double[N_PIXELS];
             ccs.startScan();
             int status = 0;
             while (status != 17)
@@ -61,7 +72,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public int[] GetSingleRawScanData()
         {
             // values go from ~6180 to 65535
-            int[] intensity = new int[nPixels];
+            int[] intensity = new int[N_PIXELS];
             ccs.startScan();
             int status = 0;
             while (status != 17)
@@ -97,7 +108,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             InstrumentDriverRevision = sb5.ToString().Trim();
         }
 
-        private double[] wavelengths = new double[nPixels]; 
+        private double[] wavelengths = new double[N_PIXELS]; 
 
         private string GetUserText()
         {
@@ -107,7 +118,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         }
 
         private readonly TLCCS ccs;
-        private const int nPixels = 3648;
+
 
     }
 }

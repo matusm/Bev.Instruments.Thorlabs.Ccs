@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="At.Matus.StatisticPod, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\At.Matus.StatisticPod\bin\Release\At.Matus.StatisticPod.dll</HintPath>
+    </Reference>
     <Reference Include="Bev.Instruments.Thorlabs.Ccs">
       <HintPath>..\Bev.Instruments.Thorlabs.Ccs\bin\Release\Bev.Instruments.Thorlabs.Ccs.dll</HintPath>
     </Reference>

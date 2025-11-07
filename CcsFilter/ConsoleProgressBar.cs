@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CCStest
+namespace CcsFilter
 {
     public class ConsoleProgressBar
     {

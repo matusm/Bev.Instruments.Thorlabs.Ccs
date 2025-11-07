@@ -1,4 +1,5 @@
 ﻿using Bev.Instruments.Thorlabs.Ccs;
+using At.Matus.StatisticPod;
 using System;
 using System.Globalization;
 using System.IO;
@@ -25,46 +26,94 @@ namespace CCStest
             Console.WriteLine($"Max Wavelength:           {tlCcs.MaximumWavelength:F2} nm");
             Console.WriteLine();
 
-            Console.WriteLine("Estimating optimal integration time...");
-            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, false);
-            Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
-            Console.WriteLine();
-            tlCcs.SetIntegrationTime(optimalIntegrationTime);
+            int nSamples = 100;
 
-            int nSamples = 4;
 
-            MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
-            MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
-            MeasuredSpectrum dark = new MeasuredSpectrum(tlCcs.Wavelengths);
 
-            Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #1", tlCcs);
+            MeasuredSpectrum spc;
+            int[] intData;
+            tlCcs.SetIntegrationTime(0.001);
 
-            Helper.UpdateSpectrumUI(filter, nSamples, "sample spectrum #1", tlCcs);
+            for (int i = 0; i < nSamples; i++)
+            {
+                intData = tlCcs.GetSingleRawScanData();
+                Console.WriteLine($"{i+1,4}  {MinMax(intData)}   t={tlCcs.GetIntegrationTime()} s");
+            }
 
-            Helper.UpdateSpectrumUI(dark, nSamples*2, "dark spectrum #1", tlCcs);
 
-            Helper.UpdateSpectrumUI(filter, nSamples, "sample spectrum #2", tlCcs);
 
-            Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #2", tlCcs);
 
-            Spectrum signal = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
 
-            var signalMasked = Masker.ApplyBandpassMask(signal, 400, 700, 10, 10);
 
-            Console.WriteLine();
-            Console.WriteLine($"Reference spectrum: '{reference}'");
-            Console.WriteLine($"Sample spectrum: '{filter}'");
-            Console.WriteLine($"Dark spectrum: '{dark}'");
-            Console.WriteLine($"Computed signal spectrum: '{signalMasked}'");
-            Console.WriteLine();
+            //double[] dblData;
+            //tlCcs.SetIntegrationTime(0.00001);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s"); 
+            //tlCcs.SetIntegrationTime(0.001);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s");
+            //tlCcs.SetIntegrationTime(0.01);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s");
+            //tlCcs.SetIntegrationTime(0.1);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s");
+            //tlCcs.SetIntegrationTime(1);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s");
+            //tlCcs.SetIntegrationTime(2);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s");
+            //tlCcs.SetIntegrationTime(10);
+            //dblData = tlCcs.GetSingleScanData();
+            //Console.WriteLine($"{MinMax(dblData)}   t={tlCcs.GetIntegrationTime()} s");
 
-            string csvString = signalMasked.ToCsvLines();
-            string fileName = $"spectrum_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-            string outPath = Path.Combine(Environment.CurrentDirectory, fileName);
-            File.WriteAllText(outPath, csvString);
+            //spc = Helper.GetRawSpectrumUI(nSamples, $"spectrum t={tlCcs.GetIntegrationTime()}s", tlCcs);
+            //Console.WriteLine($"{tlCcs.GetIntegrationTime()} s   min: {spc.MinimumValue:F1}   max: {spc.MaximumValue:F1}");
+            //tlCcs.SetIntegrationTime(0.01);
+            //spc = Helper.GetRawSpectrumUI(nSamples, $"spectrum t={tlCcs.GetIntegrationTime()}s", tlCcs);
+            //Console.WriteLine($"{tlCcs.GetIntegrationTime()} s   min: {spc.MinimumValue:F1}   max: {spc.MaximumValue:F1}");
+            //tlCcs.SetIntegrationTime(0.1);
+            //spc = Helper.GetRawSpectrumUI(nSamples, $"spectrum t={tlCcs.GetIntegrationTime()}s", tlCcs);
+            //Console.WriteLine($"{tlCcs.GetIntegrationTime()} s   min: {spc.MinimumValue:F1}   max: {spc.MaximumValue:F1}");
+            ////tlCcs.SetIntegrationTime(1);
+            ////spc = Helper.GetRawSpectrumUI(nSamples, $"spectrum t={tlCcs.GetIntegrationTime()}s", tlCcs);
+            ////Console.WriteLine($"{tlCcs.GetIntegrationTime()} s   min: {spc.MinimumValue:F1}   max: {spc.MaximumValue:F1}");
 
+
+
+            //string csvString = spc.ToCsvLines();
+            //string fileName = $"spectrum_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            //string outPath = Path.Combine(Environment.CurrentDirectory, fileName);
+            //File.WriteAllText(outPath, csvString);
             Console.WriteLine("done.");
 
+        }
+
+        static string MinMax(int[] data)
+        {
+
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            foreach (var v in data)
+            {
+                if (v < min) min = v;
+                if (v > max) max = v;
+            }
+            return $"min: {min}, max: {max}";
+        }
+
+        static string MinMax(double[] data)
+        {
+
+            double min = double.MaxValue;
+            double  max = double.MinValue;
+            foreach (var v in data)
+            {
+                if (v < min) min = v;
+                if (v > max) max = v;
+            }
+            return $"min: {min:F5}, max: {max:F5}";
         }
 
     }
