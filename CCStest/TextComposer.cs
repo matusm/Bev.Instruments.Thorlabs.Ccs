@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using At.Matus.SpectrumPod;
 using Bev.Instruments.Thorlabs.Ccs;
 
 namespace CCStest
@@ -24,7 +25,7 @@ namespace CCStest
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
             {
                 var dp = spectrum.DataPoints[i];
-                sb.AppendLine($"{dp.Wavelength:e9},{dp.Value:e9}");
+                sb.AppendLine($"{dp.Wavelength:e9},{dp.Signal:e9}");
             }
             sb.AppendLine("[EndOfFile]");
             return sb.ToString();

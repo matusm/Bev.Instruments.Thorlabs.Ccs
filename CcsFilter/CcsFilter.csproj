@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="At.Matus.SpectrumPod">
+      <HintPath>..\..\At.Matus.Spectrum\At.Matus.Spectrum\bin\Release\At.Matus.SpectrumPod.dll</HintPath>
+    </Reference>
     <Reference Include="Bev.Instruments.Thorlabs.Ccs">
       <HintPath>..\Bev.Instruments.Thorlabs.Ccs\bin\Release\Bev.Instruments.Thorlabs.Ccs.dll</HintPath>
     </Reference>

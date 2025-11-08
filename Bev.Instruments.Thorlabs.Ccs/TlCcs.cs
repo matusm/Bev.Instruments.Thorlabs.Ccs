@@ -14,7 +14,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         CCS200 = 0x8089
     }
 
-    public class TlCcs
+    public partial class TlCcs
     {
         private const int N_PIXELS = 3648;
 

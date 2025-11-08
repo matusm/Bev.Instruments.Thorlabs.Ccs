@@ -1,8 +1,7 @@
-﻿using Bev.Instruments.Thorlabs.Ccs;
-using At.Matus.StatisticPod;
+﻿using At.Matus.SpectrumPod;
+using Bev.Instruments.Thorlabs.Ccs;
 using System;
 using System.Globalization;
-using System.IO;
 
 namespace CCStest
 {

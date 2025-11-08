@@ -1,4 +1,5 @@
-﻿using Bev.Instruments.Thorlabs.Ccs;
+﻿using At.Matus.SpectrumPod;
+using Bev.Instruments.Thorlabs.Ccs;
 using System;
 using System.Globalization;
 using System.IO;
@@ -31,7 +32,7 @@ namespace CcsFilter
             Console.WriteLine();
             tlCcs.SetIntegrationTime(optimalIntegrationTime);
 
-            int nSamples = 4;
+            int nSamples = 10;
 
             MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
             MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
