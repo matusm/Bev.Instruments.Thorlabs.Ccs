@@ -27,7 +27,7 @@ namespace CcsFilter
             Console.WriteLine();
 
             Console.WriteLine("Estimating optimal integration time...");
-            double optimalIntegrationTime = Helper.GetOptimalIntegrationTime(tlCcs, 1, false);
+            double optimalIntegrationTime = tlCcs.GetOptimalIntegrationTime(1, false);
             Console.WriteLine($"Optimal Integration Time: {optimalIntegrationTime} s");
             Console.WriteLine();
             tlCcs.SetIntegrationTime(optimalIntegrationTime);
