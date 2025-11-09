@@ -50,8 +50,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IArraySpectrometer.cs" />
     <Compile Include="OptimalExposure.cs" />
-    <Compile Include="TlCcs.cs" />
+    <Compile Include="ThorlabsCcs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

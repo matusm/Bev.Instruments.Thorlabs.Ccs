@@ -1,4 +1,17 @@
-﻿using System;
+﻿/*
+ * Purpose:
+ *   Lightweight adapter for the Thorlabs CCS family of array spectrometers.
+ *   This file contains the device interop and simple acquisition methods.
+ *   Keep high-level algorithms and processing (e.g., optimal exposure) in
+ *   separate partials or services to follow SRP.
+ *
+ * Notes:
+ *  - Targets C# 7.3 and .NET Framework 4.7.2.
+ *  - Date: 2025-11-09
+ *  - Author: GitHub Copilot
+ */
+
+using System;
 using System.Text;
 using System.Threading;
 using Thorlabs.ccs.interop64;
@@ -14,8 +27,9 @@ namespace Bev.Instruments.Thorlabs.Ccs
         CCS200 = 0x8089
     }
 
-    public partial class TlCcs
+    public partial class ThorlabsCcs : IArraySpectrometer
     {
+        private readonly TLCCS ccs;
         private const int N_PIXELS = 3648;
 
         public string ResourceName { get; }
@@ -30,11 +44,11 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double MinimumWavelength => wavelengths[0];
         public double MaximumWavelength => wavelengths[wavelengths.Length - 1];
 
-        public TlCcs(string serialNumber) : this(ProductID.CCS100, serialNumber) { }
+        public ThorlabsCcs(string serialNumber) : this(ProductID.CCS100, serialNumber) { }
 
-        public TlCcs(ProductID id, string serialNumber)
+        public ThorlabsCcs(ProductID id, string serialNumber)
         {
-            ResourceName = $"USB0::0x1313::0x{((int)id).ToString("X4")}::{serialNumber}::RAW";
+            ResourceName = $"USB0::0x1313::0x{(int)id:X4}::{serialNumber}::RAW";
             ccs = new TLCCS(ResourceName, true, true);
             QueryWavelengths();
             QueryIdentification();
@@ -53,9 +67,8 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return value;   
         }   
 
-        public double[] GetSingleScanData()
+        public double[] GetScanData()
         {
-            //TODO try catch
             double[] intensity = new double[N_PIXELS];
             ccs.startScan();
             int status = 0;
@@ -69,7 +82,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             return intensity;
         }
 
-        public int[] GetSingleRawScanData()
+        public int[] GetRawScanData()
         {
             // values go from ~6180 to 65535
             int[] intensity = new int[N_PIXELS];
@@ -116,9 +129,6 @@ namespace Bev.Instruments.Thorlabs.Ccs
             ccs.getUserText(uText);
             return uText.ToString();
         }
-
-        private readonly TLCCS ccs;
-
 
     }
 }

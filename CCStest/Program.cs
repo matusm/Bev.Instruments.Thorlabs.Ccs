@@ -7,12 +7,12 @@ namespace CCStest
 {
     internal class Program
     {
-        static TlCcs tlCcs;
+        static ThorlabsCcs tlCcs;
 
         static void Main(string[] args)
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            tlCcs = new TlCcs(ProductID.CCS100, "M00928408");
+            tlCcs = new ThorlabsCcs(ProductID.CCS100, "M00928408");
 
             Console.WriteLine($"Resource Name:            {tlCcs.ResourceName}");
             Console.WriteLine($"Instrument Manufacturer:  {tlCcs.InstrumentManufacturer}");
@@ -35,7 +35,7 @@ namespace CCStest
 
             for (int i = 0; i < nSamples; i++)
             {
-                intData = tlCcs.GetSingleRawScanData();
+                intData = tlCcs.GetRawScanData();
                 Console.WriteLine($"{i+1,4}  {MinMax(intData)}   t={tlCcs.GetIntegrationTime()} s");
             }
 

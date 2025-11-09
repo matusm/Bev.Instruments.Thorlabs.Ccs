@@ -1,8 +1,20 @@
-﻿using System;
+﻿/*
+ * Purpose:
+ *   Helper method to determine an optimal integration time for the Thorlabs spectrometer
+ *   based on measured signal levels. Keep this file focused on the exposure/optimization
+ *   concern; consider moving acquisition/driver logic into a dedicated service for SRP.
+ *
+ * Notes:
+ *  - Targets C# 7.3 and .NET Framework 4.7.2.
+ *  - Date: 2025-11-09
+ *  - Author: GitHub Copilot
+ */
+
+using System;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
-    public partial class TlCcs
+    public partial class ThorlabsCcs
     {
         public double GetOptimalIntegrationTime() => GetOptimalIntegrationTime(1.0, false);
 
@@ -13,7 +25,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             while (integrationTime < 58)
             {
                 SetIntegrationTime(integrationTime);
-                var signal = GetSingleScanData();
+                var signal = GetScanData();
                 var maxSignal = GetMaximumSignal(signal);
 
                 if (debug)
@@ -27,7 +39,9 @@ namespace Bev.Instruments.Thorlabs.Ccs
                 }
                 integrationTime *= 2;
             }
-            return RoundToSignificantDigits(optimalIntegrationTime, 2);
+            var finalIntegrationTime = RoundToSignificantDigits(optimalIntegrationTime, 2);
+            SetIntegrationTime(finalIntegrationTime);
+            return finalIntegrationTime;
         }
 
         private double GetMaximumSignal(double[] signal)

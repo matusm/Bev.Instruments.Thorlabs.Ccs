@@ -7,7 +7,7 @@ namespace CcsFilter
     internal static class Helper
     {
         // Updates the provided MeasuredSpectrum by taking numberSamples raw scans from the tlCcs device.
-        internal static void UpdateRawSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, TlCcs tlCcs)
+        internal static void UpdateRawSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, ThorlabsCcs tlCcs)
         {
             double[] rawData = new double[spectrum.NumberOfPoints];
             ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
@@ -16,7 +16,7 @@ namespace CcsFilter
             {
                 for (int i = 0; i < numberSamples; i++)
                 {
-                    var intData = tlCcs.GetSingleRawScanData();
+                    var intData = tlCcs.GetRawScanData();
                     for (int j = 0; j < rawData.Length; j++)
                     {
                         rawData[j] = intData[j];
@@ -33,7 +33,7 @@ namespace CcsFilter
         }
 
         // Updates the provided MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
-        internal static void UpdateSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, TlCcs tlCcs)
+        internal static void UpdateSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, ThorlabsCcs tlCcs)
         {
             ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
             Console.WriteLine($"Press any key to start measurement of {message} - 's' to skip");
@@ -41,7 +41,7 @@ namespace CcsFilter
             {
                 for (int i = 0; i < numberSamples; i++)
                 {
-                    spectrum.UpdateSignal(tlCcs.GetSingleScanData());
+                    spectrum.UpdateSignal(tlCcs.GetScanData());
                     consoleProgressBar.Report(i + 1, numberSamples);
                 }
                 spectrum.Name = $"{message}";
@@ -53,7 +53,7 @@ namespace CcsFilter
         }
 
         // Creates and returns a MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
-        internal static MeasuredSpectrum GetSpectrumUI(int numberSamples, string message, TlCcs tlCcs)
+        internal static MeasuredSpectrum GetSpectrumUI(int numberSamples, string message, ThorlabsCcs tlCcs)
         {
             MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
             UpdateSpectrumUI(spectrum, numberSamples, message, tlCcs);
