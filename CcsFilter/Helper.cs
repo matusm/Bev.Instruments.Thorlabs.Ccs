@@ -1,5 +1,5 @@
 ﻿using System;
-using At.Matus.SpectrumPod;
+using At.Matus.OpticalSpectrumLib;
 using Bev.Instruments.Thorlabs.Ccs;
 
 namespace CcsFilter
@@ -7,7 +7,7 @@ namespace CcsFilter
     internal static class Helper
     {
         // Updates the provided MeasuredSpectrum by taking numberSamples raw scans from the tlCcs device.
-        internal static void UpdateRawSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, ThorlabsCcs tlCcs)
+        internal static void UpdateRawSpectrumUI(MeasuredOpticalSpectrum spectrum, int numberSamples, string message, ThorlabsCcs tlCcs)
         {
             double[] rawData = new double[spectrum.NumberOfPoints];
             ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
@@ -33,7 +33,7 @@ namespace CcsFilter
         }
 
         // Updates the provided MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
-        internal static void UpdateSpectrumUI(MeasuredSpectrum spectrum, int numberSamples, string message, ThorlabsCcs tlCcs)
+        internal static void UpdateSpectrumUI(MeasuredOpticalSpectrum spectrum, int numberSamples, string message, ThorlabsCcs tlCcs)
         {
             ConsoleProgressBar consoleProgressBar = new ConsoleProgressBar();
             Console.WriteLine($"Press any key to start measurement of {message} - 's' to skip");
@@ -53,9 +53,9 @@ namespace CcsFilter
         }
 
         // Creates and returns a MeasuredSpectrum by taking numberSamples scans from the tlCcs device.
-        internal static MeasuredSpectrum GetSpectrumUI(int numberSamples, string message, ThorlabsCcs tlCcs)
+        internal static MeasuredOpticalSpectrum GetSpectrumUI(int numberSamples, string message, ThorlabsCcs tlCcs)
         {
-            MeasuredSpectrum spectrum = new MeasuredSpectrum(tlCcs.Wavelengths);
+            MeasuredOpticalSpectrum spectrum = new MeasuredOpticalSpectrum(tlCcs.Wavelengths);
             UpdateSpectrumUI(spectrum, numberSamples, message, tlCcs);
             return spectrum;
         }

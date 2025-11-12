@@ -1,11 +1,11 @@
 ﻿using System.Text;
-using At.Matus.SpectrumPod;
+using At.Matus.OpticalSpectrumLib;
 
 namespace CcsFilter
 {
     internal static class TextComposer
     {
-        internal static string ToCsvLines(this ISpectrum spectrum)
+        internal static string ToCsvLines(this IOpticalSpectrum spectrum)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < spectrum.NumberOfPoints; i++)
@@ -15,7 +15,7 @@ namespace CcsFilter
             return sb.ToString();
         }
 
-        internal static string ToThorlabsCsvLines(this ISpectrum spectrum)
+        internal static string ToThorlabsCsvLines(this IOpticalSpectrum spectrum)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("[Header]");

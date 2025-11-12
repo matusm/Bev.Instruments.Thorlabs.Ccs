@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bev.Instruments.Thorlabs.Ccs", "Bev.Instruments.Thorlabs.Ccs\Bev.Instruments.Thorlabs.Ccs.csproj", "{70D226C1-A873-4633-8A08-1C7BF4D4555A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCStest", "CCStest\CCStest.csproj", "{D6773084-0979-4D57-B748-66C7B6662499}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CcsFilter", "CcsFilter\CcsFilter.csproj", "{E6735AB4-DD34-443B-827D-E55E8621BEA1}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70D226C1-A873-4633-8A08-1C7BF4D4555A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D6773084-0979-4D57-B748-66C7B6662499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6773084-0979-4D57-B748-66C7B6662499}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6773084-0979-4D57-B748-66C7B6662499}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6773084-0979-4D57-B748-66C7B6662499}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6735AB4-DD34-443B-827D-E55E8621BEA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6735AB4-DD34-443B-827D-E55E8621BEA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6735AB4-DD34-443B-827D-E55E8621BEA1}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,4 +1,4 @@
-﻿using At.Matus.SpectrumPod;
+﻿using At.Matus.OpticalSpectrumLib;
 using Bev.Instruments.Thorlabs.Ccs;
 using System;
 using System.Globalization;
@@ -34,9 +34,9 @@ namespace CcsFilter
 
             int nSamples = 10;
 
-            MeasuredSpectrum reference = new MeasuredSpectrum(tlCcs.Wavelengths);
-            MeasuredSpectrum filter = new MeasuredSpectrum(tlCcs.Wavelengths);
-            MeasuredSpectrum dark = new MeasuredSpectrum(tlCcs.Wavelengths);
+            MeasuredOpticalSpectrum reference = new MeasuredOpticalSpectrum(tlCcs.Wavelengths);
+            MeasuredOpticalSpectrum filter = new MeasuredOpticalSpectrum(tlCcs.Wavelengths);
+            MeasuredOpticalSpectrum dark = new MeasuredOpticalSpectrum(tlCcs.Wavelengths);
 
             Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #1", tlCcs);
 
@@ -48,7 +48,7 @@ namespace CcsFilter
 
             Helper.UpdateSpectrumUI(reference, nSamples, "reference spectrum #2", tlCcs);
 
-            Spectrum signal = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
+            OpticalSpectrum signal = SpecMath.ComputeBiasCorrectedRatio(filter, reference, dark);
 
             var signalMasked = Masker.ApplyBandpassMask(signal, 400, 700, 10, 10);
 
