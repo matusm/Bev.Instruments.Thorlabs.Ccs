@@ -29,7 +29,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
     public partial class ThorlabsCcs : IArraySpectrometer
     {
-        private readonly TLCCS ccs;
+        private readonly TLCCS spectrometer;
         private const int N_PIXELS = 3648;
 
         public string ResourceName { get; }
@@ -40,16 +40,16 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public string InstrumentDriverRevision { get; private set; } = "";
         public string InstrumentUserText => GetUserText();
 
-        public double[] Wavelengths => wavelengths;
-        public double MinimumWavelength => wavelengths[0];
-        public double MaximumWavelength => wavelengths[wavelengths.Length - 1];
+        public double[] Wavelengths => wavelengthsCache;
+        public double MinimumWavelength => wavelengthsCache[0];
+        public double MaximumWavelength => wavelengthsCache[wavelengthsCache.Length - 1];
 
         public ThorlabsCcs(string serialNumber) : this(ProductID.CCS100, serialNumber) { }
 
         public ThorlabsCcs(ProductID id, string serialNumber)
         {
             ResourceName = $"USB0::0x1313::0x{(int)id:X4}::{serialNumber}::RAW";
-            ccs = new TLCCS(ResourceName, true, true);
+            spectrometer = new TLCCS(ResourceName, true, true);
             QueryWavelengths();
             QueryIdentification();
         }
@@ -58,26 +58,26 @@ namespace Bev.Instruments.Thorlabs.Ccs
         {
             if (seconds < 0.00001) seconds = 0.00001;
             if (seconds > 52) seconds = 52; // the manual says max 60s, but only up to 52s works
-            ccs.setIntegrationTime(seconds);
+            spectrometer.setIntegrationTime(seconds);
         }
 
         public double GetIntegrationTime()
         {
-            ccs.getIntegrationTime(out double value);
+            spectrometer.getIntegrationTime(out double value);
             return value;   
         }   
 
-        public double[] GetScanData()
+        public double[] GetIntensityData()
         {
             double[] intensity = new double[N_PIXELS];
-            ccs.startScan();
+            spectrometer.startScan();
             int status = 0;
             while (status != 17)
             {
-                ccs.getDeviceStatus(out status);
+                spectrometer.getDeviceStatus(out status);
                 Thread.Sleep(100);
             }
-            int ret = ccs.getScanData(intensity); // when overexposed ret!=0
+            int ret = spectrometer.getScanData(intensity); // when overexposed ret!=0
             if (ret != 0) throw new Exception($"Error reading scan data, return code: {ret}");
             return intensity;
         }
@@ -86,14 +86,14 @@ namespace Bev.Instruments.Thorlabs.Ccs
         {
             // values go from ~6180 to 65535
             int[] intensity = new int[N_PIXELS];
-            ccs.startScan();
+            spectrometer.startScan();
             int status = 0;
             while (status != 17)
             {
-                ccs.getDeviceStatus(out status);
+                spectrometer.getDeviceStatus(out status);
                 Thread.Sleep(100);
             }
-            int ret = ccs.getRawScanData(intensity); // when overexposed ret!=0
+            int ret = spectrometer.getRawScanData(intensity); // when overexposed ret!=0
             if (ret != 0) throw new Exception($"Error reading scan data, return code: {ret}");
             return intensity;
         }
@@ -103,7 +103,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             short dataSet = 0;
             double minimumWavelength = 0;
             double maximumWavelength = 0;
-            ccs.getWavelengthData(dataSet, wavelengths, out minimumWavelength, out maximumWavelength);
+            spectrometer.getWavelengthData(dataSet, wavelengthsCache, out minimumWavelength, out maximumWavelength);
         }
 
         private void QueryIdentification()
@@ -113,7 +113,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             StringBuilder sb3 = new StringBuilder(256);
             StringBuilder sb4 = new StringBuilder(256);
             StringBuilder sb5 = new StringBuilder(256);
-            ccs.identificationQuery(sb1, sb2, sb3, sb4, sb5);
+            spectrometer.identificationQuery(sb1, sb2, sb3, sb4, sb5);
             InstrumentManufacturer = sb1.ToString().Trim();
             InstrumentType = sb2.ToString().Trim();
             InstrumentSerialNumber = sb3.ToString().Trim();
@@ -121,12 +121,12 @@ namespace Bev.Instruments.Thorlabs.Ccs
             InstrumentDriverRevision = sb5.ToString().Trim();
         }
 
-        private double[] wavelengths = new double[N_PIXELS]; 
+        private double[] wavelengthsCache = new double[N_PIXELS]; 
 
         private string GetUserText()
         {
             StringBuilder uText = new StringBuilder();
-            ccs.getUserText(uText);
+            spectrometer.getUserText(uText);
             return uText.ToString();
         }
 

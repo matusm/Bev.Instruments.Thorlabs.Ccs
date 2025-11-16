@@ -25,7 +25,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
             while (integrationTime < 58)
             {
                 SetIntegrationTime(integrationTime);
-                var signal = GetScanData();
+                var signal = GetIntensityData();
                 var maxSignal = GetMaximumSignal(signal);
 
                 if (debug)

@@ -29,7 +29,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         double MinimumWavelength { get; }
         double MaximumWavelength { get; }
         
-        double[] GetScanData();
+        double[] GetIntensityData();
         void SetIntegrationTime(double seconds);
         double GetIntegrationTime();
     }

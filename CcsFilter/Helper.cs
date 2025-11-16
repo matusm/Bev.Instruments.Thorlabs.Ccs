@@ -41,7 +41,7 @@ namespace CcsFilter
             {
                 for (int i = 0; i < numberSamples; i++)
                 {
-                    spectrum.UpdateSignal(tlCcs.GetScanData());
+                    spectrum.UpdateSignal(tlCcs.GetIntensityData());
                     consoleProgressBar.Report(i + 1, numberSamples);
                 }
                 spectrum.Name = $"{message}";
