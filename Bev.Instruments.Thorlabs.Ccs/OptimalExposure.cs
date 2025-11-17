@@ -16,9 +16,9 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public partial class ThorlabsCcs
     {
-        public double GetOptimalIntegrationTime() => GetOptimalIntegrationTime(1.0, false);
+        public double GetOptimalExposureTime() => GetOptimalExposureTime(1.0, false);
 
-        public double GetOptimalIntegrationTime(double targetSignal, bool debug)
+        public double GetOptimalExposureTime(double targetSignal, bool debug)
         {
             double optimalIntegrationTime = 0;
             double integrationTime = 0.00001; // seconds
