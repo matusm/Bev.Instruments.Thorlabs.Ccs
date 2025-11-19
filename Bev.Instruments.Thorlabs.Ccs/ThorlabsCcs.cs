@@ -15,6 +15,7 @@ using System;
 using System.Text;
 using System.Threading;
 using Thorlabs.ccs.interop64;
+using Bev.Instruments.ArraySpectrometer.Abstractions;
 
 namespace Bev.Instruments.Thorlabs.Ccs
 {
