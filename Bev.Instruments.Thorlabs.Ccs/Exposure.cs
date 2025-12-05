@@ -16,7 +16,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
 {
     public static class Exposure
     {
-        public static double GetOptimalExposureTime(this ThorlabsCcs spectro) => spectro.GetOptimalExposureTime(1.0, false);
+        public static double GetOptimalExposureTime(this ThorlabsCcs spectro) => spectro.GetOptimalExposureTime(spectro.SaturationLevel, false);
 
         public static double GetOptimalExposureTime(this ThorlabsCcs spectro, double targetSignal, bool debug)
         {

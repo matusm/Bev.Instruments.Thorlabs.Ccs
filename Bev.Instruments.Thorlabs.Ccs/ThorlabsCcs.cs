@@ -12,7 +12,6 @@
  */
 
 using System;
-using System.Text;
 using System.Threading;
 using Thorlabs.ccs.interop64;
 using Bev.Instruments.ArraySpectrometer.Abstractions;
@@ -44,6 +43,7 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double[] Wavelengths => wavelengthsCache;
         public double MinimumWavelength => wavelengthsCache[0];
         public double MaximumWavelength => wavelengthsCache[wavelengthsCache.Length - 1];
+        public double SaturationLevel => 1.0;
 
         public ThorlabsCcs(string serialNumber) : this(ProductID.CCS100, serialNumber) { }
 
