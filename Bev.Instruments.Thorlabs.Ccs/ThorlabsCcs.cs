@@ -44,6 +44,8 @@ namespace Bev.Instruments.Thorlabs.Ccs
         public double MinimumWavelength => wavelengthsCache[0];
         public double MaximumWavelength => wavelengthsCache[wavelengthsCache.Length - 1];
         public double SaturationLevel => 1.0;
+        public double MinimumIntegrationTime => 0.00001;
+        public double MaximumIntegrationTime => 52.0; // the manual says max 60s, but only up to 52s works
 
         public ThorlabsCcs(string serialNumber) : this(ProductID.CCS100, serialNumber) { }
 
@@ -57,8 +59,8 @@ namespace Bev.Instruments.Thorlabs.Ccs
 
         public void SetIntegrationTime(double seconds)
         {
-            if (seconds < 0.00001) seconds = 0.00001;
-            if (seconds > 52) seconds = 52; // the manual says max 60s, but only up to 52s works
+            if (seconds < MinimumIntegrationTime) seconds = MinimumIntegrationTime;
+            if (seconds > MaximumIntegrationTime) seconds = MaximumIntegrationTime;
             spectrometer.setIntegrationTime(seconds);
         }
 
